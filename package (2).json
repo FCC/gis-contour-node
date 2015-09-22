@@ -1,0 +1,46 @@
+{
+  "name": "opif_ff",
+  "version": "0.0.1",
+  "description": "FCC OPIF Folder & File Management API - Node.js",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FCC/opif-folder-mgmt.git"
+  },
+  "keywords": [
+    "fcc",
+    "opif",
+    "node"
+  ],
+  "author": "FCC",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/FCC/opif-folder-mgmt/issues"
+  },
+  "homepage": "https://github.com/FCC/opif-folder-mgmt#readme",
+  "dependencies": {
+    "async": "^1.4.0",
+    "bluebird": "^2.9.34",
+    "body-parser": "~1.13.2",
+    "bookshelf": "^0.8.1",
+    "cookie-parser": "~1.3.5",
+    "cors": "^2.7.1",
+    "debug": "~2.2.0",
+    "express": "~4.13.1",
+    "file-stream-rotator": "0.0.6",
+    "jade": "~1.11.0",
+    "js2xmlparser": "^1.0.0",
+    "knex": "^0.8.6",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "morgan": "~1.6.1",
+    "pg": "^4.4.1",
+    "pg-query": "^0.11.0",
+    "serve-favicon": "~2.3.0"
+  }
+}

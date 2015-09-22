@@ -1,0 +1,1067 @@
+{
+    "swagger":"2.0",
+    "info": {
+        "version": "0.0.1",
+        "title": "FCC OPIF Folder & File Management API"
+    },
+    "host": "localhost:1979",
+    "schemes":["http"],
+    "basePath": "/",
+    "tags":[
+        {
+            "name":"folder",
+            "description":"OPIF Folder Management"
+        },
+        {
+            "name":"file",
+            "description":"OPIF File Management"
+        },
+        {
+            "name":"stats",
+            "description":"OPIF File & Folder Statistics"
+        }
+    ],
+    "paths":{
+        "/folder/findById/{folderId}.{format}": {
+            "get":{
+                "tags": ["folder"],
+                "summary": "Get Subfolder and files",
+                "description": "Get OPIF folder information including list of subfolders and files. Response returned in specified format.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/folderIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "get folder response",
+                        "schema": {
+                             "$ref": "#/definitions/Entity"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }            
+        },
+        "/folder/listParents.{format}": {
+            "get":{
+                "tags": ["folder"],
+                "summary": "Get parent folders",
+                "description": "Get root folder information including list of subfolders and files. Response returned in specified format.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/facilityIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                                        {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "get parent folders response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Folder"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }            
+        },
+        "/folder/create.{format}": {
+            "post":{
+                "tags": ["folder"],
+                "summary": "Create new folder",
+                "description": "Create new folder with the folder details specified.",
+                "parameters": [
+                    {
+                        "name":"folderName",
+                        "in":"query",
+                        "description":"Name of the new folder.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                         "$ref":"#/parameters/facilityIdParam"
+                    },
+                    {
+                        "name":"parentFolderId",
+                        "in":"query",
+                        "description": "Unique Id of the parent folder",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"parentFolderType",
+                        "in":"query",
+                        "description":"Parent folder type.<br /><br />Valid values: M or E",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                       "$ref":"#/parameters/accessTokenParam" 
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkOptParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "create folder response",
+                        "schema": {
+                            "$ref": "#/definitions/Folder"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/folder/rename/{folderId}.{format}": {
+            "put":{
+                "tags": ["folder"],
+                "summary": "Rename Folder",
+                "description": "Rename the folder with the specified folder name.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/folderIdParam"
+                    },
+                    {
+                        "name":"folderName",
+                        "in":"query",
+                        "description":"New name of the specified folder",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkOptParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "rename folder response",
+                        "schema": {
+                            "$ref": "#/definitions/Folder"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/folder/restore/{folderId}.{format}": {
+            "put":{
+                "tags": ["folder"],
+                "summary": "Restore Folder",
+                "description": "Restore the status of the folder with the specified id.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/folderIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkOptParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "restore folder response",
+                        "schema": {
+                            "$ref": "#/definitions/Folder"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/folder/remove/{folderId}.{format}": {
+            "delete":{
+                "tags": ["folder"],
+                "summary": "Remove Folder",
+                "description": "Mark the specified folder as deleted.",
+                "parameters": [                    
+                    {
+                        "$ref":"#/parameters/folderIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkOptParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "remove folder response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/folder/purge/{folderId}.{format}": {
+            "delete":{
+                "tags": ["folder"],
+                "summary": "Purge Folder",
+                "description": "Purge the folder with the specified id.",
+                "parameters": [                    
+                    {
+                        "$ref":"#/parameters/folderIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkOptParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Purge folder response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/folder/history.{format}": {
+            "get":{
+                "tags": ["folder"],
+                "summary": "List changed folders",
+                "description": "Lists folders that were modified.",
+                "parameters": [                 
+                    {
+                        "name":"count",
+                        "in":"query",
+                        "description":"Number of folders in the list.",
+                        "required":false,
+                        "type":"integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name":"status",
+                        "in":"query",
+                        "description":"Status of folder in the list.",
+                        "required":false,
+                        "type":"string"
+                    },
+                    {
+                        "name":"facilityId",
+                        "in": "query",
+                        "description":"Unique Facility Id.",
+                        "required": true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"startDate",
+                        "in":"query",
+                        "description": "Date in ISO-8601 format.<br /><br />YYYY-MM-DD (eg 2015-08-25)",
+                        "required": false,
+                        "type":"string",
+                        "format": "date"
+                    },
+                    {
+                        "name":"endDate",
+                        "in":"query",
+                        "description": "Date in ISO-8601 format.<br /><br />YYYY-MM-DD (eg 2015-08-25)",
+                        "required": false,
+                        "type":"string",
+                        "format": "date"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of changed files response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Folder"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/folder/search/{searchKey}.{format}": {
+            "get":{
+                "tags": ["folder"],
+                "summary": "Search for folders",
+                "description": "List of folders that match the search parameter.",
+                "parameters": [                 
+                    {
+                        "name":"searchKey",
+                        "in":"path",
+                        "description":"Search parameter.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search folders response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Folder"
+                            }
+                        }
+                   }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/findById/{fileId}.{format}": {
+            "get":{
+                "tags": ["file"],
+                "summary": "Get File Details",
+                "description": "Returns the file information for the specified file id.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/fileIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get file response",
+                        "schema": {
+                            "$ref": "#/definitions/File"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/add.{format}": {
+            "post":{
+                "tags": ["file"],
+                "summary": "Add new file",
+                "description": "Add new file with the specified file details.",
+                "parameters": [
+                    {
+                        "name":"fileName",
+                        "in":"query",
+                        "description":"Name of the new file.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"fileExtension",
+                        "in":"query",
+                        "description":"File extension.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"fileSize",
+                        "in":"query",
+                        "description":"File size in bytes.",
+                        "required":true,
+                        "type":"integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name":"fileUrl",
+                        "in":"query",
+                        "description":"File URL.",
+                        "required":false,
+                        "type":"string"
+                    },
+                    {
+                        "name":"folderId",
+                        "in":"query",
+                        "description":"Unique id of the parent folder.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "$ref":"#/parameters/uuidParam"
+                    },
+                    {
+                       "$ref":"#/parameters/accessTokenParam" 
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add new file response",
+                        "schema": {
+                            "$ref": "#/definitions/File"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/updateStatus/{fileId}.{format}": {
+            "put":{
+                "tags": ["file"],
+                "summary": "Update File Status",
+                "description": "Update status of the specified file.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/fileIdParam"
+                    },
+                    {
+                        "name":"fileStatus",
+                        "in":"query",
+                        "description":"New status of the specified file",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "update file status response",
+                        "schema": {
+                            "$ref": "#/definitions/File"
+                        }
+                    }
+                },
+                 "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/rename/{fileId}.{format}": {
+            "put":{
+                "tags": ["file"],
+                "summary": "Rename File ",
+                "description": "Rename the file with specified file name.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/fileIdParam"
+                    },
+                    {
+                        "name":"fileName",
+                        "in":"query",
+                        "description":"New name of the specified file",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "rename file response",
+                        "schema": {
+                            "$ref": "#/definitions/File"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/restore/{fileId}.{format}": {
+            "put":{
+                "tags": ["file"],
+                "summary": "Restore File ",
+                "description": "Restore the file with the specified id.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/fileIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "restore file response",
+                        "schema": {
+                            "$ref": "#/definitions/File"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/remove/{fileId}.{format}": {
+            "delete":{
+                "tags": ["file"],
+                "summary": "Remove File",
+                "description": "Mark file as deleted.",
+                "parameters": [                 
+                    {
+                        "$ref":"#/parameters/fileIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "remove file response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/purge/{fileId}.{format}": {
+            "delete":{
+                "tags": ["file"],
+                "summary": "Purge File",
+                "description": "Mark file as purged.",
+                "parameters": [                 
+                    {
+                        "$ref":"#/parameters/fileIdParam"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "purge file response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/history.{format}": {
+            "get":{
+                "tags": ["file"],
+                "summary": "List changed files",
+                "description": "Lists files that were modified.",
+                "parameters": [                 
+                    {
+                        "name":"count",
+                        "in":"query",
+                        "description":"Count of number of files in the list.",
+                        "required":false,
+                        "type":"integer",
+                        "format": "int32"
+                    },
+                    {
+                        "name":"status",
+                        "in":"query",
+                        "description":"Status of files in the list.",
+                        "required":false,
+                        "type":"string"
+                    },
+                    {
+                        "name":"facilityId",
+                        "in": "query",
+                        "description":"Unique Facility Id.",
+                        "required": true,
+                        "type":"string"
+                    },
+                    {
+                        "name":"startDate",
+                        "in":"query",
+                        "description": "Date in ISO-8601 format.<br /><br />YYYY-MM-DD (eg 2015-08-25)",
+                        "required": false,
+                        "type":"string",
+                        "format": "date"
+                    },
+                    {
+                        "name":"endDate",
+                        "in":"query",
+                        "description": "Date in ISO-8601 format.<br /><br />YYYY-MM-DD (eg 2015-08-25)",
+                        "required": false,
+                        "type":"string",
+                        "format": "date"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of changed files response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/File"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/file/search/{searchKey}.{format}": {
+            "get":{
+                "tags": ["file"],
+                "summary": "Search for files",
+                "description": "List of files that match the search parameter.",
+                "parameters": [                 
+                    {
+                        "name":"searchKey",
+                        "in":"path",
+                        "description":"Search parameter.",
+                        "required":true,
+                        "type":"string"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search files response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/File"
+                            }
+                        }
+                   }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        },
+        "/stats/file/upload/count.{format}": {
+            "get":{
+                "tags": ["stats"],
+                "summary": "Uploaded files count",
+                "description": "Count of files uploaded per day withen the date range.",
+                "parameters": [                 
+                    {
+                        "name":"startDate",
+                        "in":"query",
+                        "description": "Date in ISO-8601 format.<br /><br />YYYY-MM-DD (eg 2015-08-25)",
+                        "required": false,
+                        "type":"string",
+                        "format": "date"
+                    },
+                    {
+                        "name":"endDate",
+                        "in":"query",
+                        "description": "Date in ISO-8601 format.<br /><br />YYYY-MM-DD (eg 2015-08-25)",
+                        "required": false,
+                        "type":"string",
+                        "format": "date"
+                    },
+                    {
+                        "$ref":"#/parameters/formatParam"
+                    },
+                    {
+                        "$ref":"#/parameters/callbackParam"
+                    },
+                    {
+                        "$ref":"#/parameters/pkReqParam"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of changed files response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/FileUploadStats"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/jsonp",
+                    "application/xml"
+                ]
+            }
+        }
+
+    },
+    "parameters": {
+       "fileIdParam": {
+            "name":"fileId",
+            "in":"path",
+            "description":"Unique Id of the file",
+            "required":true,
+            "type":"string"
+        },
+        "fileNameParam": {
+            "name":"fileName",
+            "in":"query",
+            "description":"Partial or complete file name.",
+            "required":true,
+            "type":"string"
+        },
+        "folderIdParam": {
+            "name":"folderId",
+            "in":"path",
+            "description":"Unique Id of the folder",
+            "required":true,
+            "type":"string"
+        },
+        "folderNameParam": {
+            "name":"folderName",
+            "in":"query",
+            "description":"Partial or complete folder name.",
+            "required":true,
+            "type":"string"
+        },
+        "accessTokenParam": {
+            "name": "accessToken",
+            "in": "query",
+            "description": "Access Token used for authentication.",
+            "required": true,
+            "type": "string"
+        },
+        "uuidParam":{
+            "name":"uuid",
+            "in": "query",
+            "description":"Unique Id.",
+            "required": true,
+            "type":"string"
+        },
+        "facilityIdParam":{
+            "name":"facilityId",
+            "in": "query",
+            "description":"Unique Facility Id.",
+            "required": true,
+            "type":"string"
+        },
+        "formatParam":{
+            "name":"format",
+            "in":"path",
+            "description":"Format for the returned results.<br /><br />Valid values: json, jsonp, xml",
+            "required":true,
+            "type":"string",
+            "enum": [
+                "json",
+                "jsonp",
+                "xml"
+            ]
+        },
+        "callbackParam":{
+            "name":"callback",
+            "in":"query",
+            "description":"Callback parameter - required for jsonp requests.",
+            "required":false,
+            "type":"string"
+        },
+        "pkOptParam":{
+            "name":"pk",
+            "in":"query",
+            "description":"Public key of application - optional unless required by file.",
+            "required":false,
+            "type":"string"
+        },
+        "pkReqParam":{
+            "name":"pk",
+            "in":"query",
+            "description":"Public key of application - required for this operation.",
+            "required":false,
+            "type":"string"
+        }   
+    },
+    "definitions": {
+        "File": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "extension": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "url": {
+                    "type": "string"
+                    },
+                "folderId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "created": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "lastUpdated": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "File Status",
+                    "enum": [
+                        "saved",
+                        "uploaded",
+                        "converted"
+                    ]
+                }
+            },
+            "xml": {
+                "name": "response"
+            }
+        },
+        "Folder": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "folderName": {
+                    "type": "string"
+                },
+                "parentFolderId": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "fileCount": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "created": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "lastUpdated": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "Entity": {
+            "type": "object",
+            "properties": {
+                "folder": {
+                   "$ref": "#/definitions/Folder"
+                },
+                "subFolders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Folder"
+                    }
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/File"
+                    }
+                }                
+            }
+        },
+        "FileUploadStats": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "fileUploadCount": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "fileErrorCount": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        }
+    },
+    "produces": [
+        "application/json",
+        "application/xml"
+    ]
+}
