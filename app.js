@@ -1,65 +1,257 @@
+
+// require 
+
+var http = require("http");
+var https = require("https");
+var url = require('url');
 var express = require('express');
+var js2xmlparser = require('js2xmlparser');
 var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var fsr = require('file-stream-rotator');
+var fs = require('fs');
+var morgan = require('morgan');
+var multer = require('multer');
+var AWS = require('aws-sdk');
+var bodyparser = require('body-parser');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+//var serverCheck = require("./server/check.js");
+//var serverSend = require("./server/send.js");
 
-var cors = require('cors');
+//var serverGet = require("./server/get.js");
+//var server_post = require("./server/post.js");
+//var server_put = require("./server/put.js");
+//var server_delete = require("./server/delete.js");
+
+var package_json = require('./package.json');
+
+var contour = require('./controllers/contour.js');
+
+// **********************************************************
+// config
+
+var configEnv = require('./config/env.json');
+
+var NODE_ENV = process.env.NODE_ENV;
+//console.log('NODE_ENV : '+ NODE_ENV );
+
+var NODE_PORT =  process.env.PORT || configEnv[NODE_ENV].NODE_PORT;
+var PG_DB = configEnv[NODE_ENV].PG_DB;
+
+// **********************************************************
+// console start
+
+console.log('package_json.name : '+ package_json.name );
+console.log('package_json.version : '+ package_json.version );
+console.log('package_json.description : '+ package_json.description );
+
+//console.log('NODE_PORT : '+ NODE_PORT );
+//console.log('PG_DB : '+ PG_DB );
+
+// **********************************************************
+// log
+
+var logDirectory = __dirname + '/log';
+
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+
+var accessLogStream = fsr.getStream({
+    filename: logDirectory + '/fcc-pdf-%DATE%.log',
+    frequency: 'daily',
+    verbose: false
+});
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.use(morgan('combined', {stream: accessLogStream}))
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// **********************************************************
+// parser
 
-app.use('/', routes);
-app.use('/users', users);
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(multer({ inMemory: true }));
 
-app.use(cors());
+// **********************************************************
+// route
 
+app.use('/', express.static(__dirname + '/client'));
+app.use('/api-docs', express.static(__dirname + '/client/api-docs.html'));
 
-// catch 404 and forward to error handler
+/*
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+*/
+
+app.param('uuid', function(req, res, next, uuid){
+    // check format of uuid
+    if(!serverCheck.checkUUID(uuid)){
+		return serverSend.sendErr(res, 'json', 'not_found');
+    } else {
+        next();
+    }
+})
+
+app.param('ext', function(req, res, next, ext) {
+    // check format of id
+	var route = req.route.path;
+	//console.log('\n  route : ' + route );
+	
+	if (!route === '/download/:uuid.:ext') {	// skip for downloads
+		if(!serverCheck.checkExt(ext)){
+			return serverSend.sendErr(res, 'json', 'invalid_ext');
+		} else {
+			next();
+		}
+	}
+	else {
+		next();
+	}
 });
 
-// error handlers
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+
+app.get('/getTVContourByFilenumber/:filenumber', function(req, res){
+contour.getTVContourByFilenumber(req, res);
+});
+
+app.get('/getAMContourByAntennaId/:antid/:station_class/:time_period', function(req, res){
+contour.getAMContourByAntennaId(req, res);
+});
+
+
+// getStatus
+app.get('/status/:uuid.:ext', function(req, res){
+	serverCheck.checkKey(req, res, false, function(){
+		serverGet.getStatus(req, res);
+	});
+});
+app.get('/status/:uuid', function(req, res){
+	serverCheck.checkKey(req, res, false, function(){
+		serverGet.getStatus(req, res);
+	});
+});
+
+// getHistory
+app.get('/history/:uuid.:ext', function(req, res){
+    serverCheck.checkKey(req, res, false, function(){
+		serverGet.getHistory(req, res);
+	});
+});
+app.get('/history/:uuid', function(req, res){
+    serverCheck.checkKey(req, res, false, function(){
+		serverGet.getHistory(req, res);
+	});
+});
+
+// getDownload
+app.get('/download/:uuid.:ext', function(req, res){
+	//console.log('\n  getDownload a' );
+    serverCheck.checkKey(req, res, false, function(){
+		//console.log('\n  getDownload b' );
+		serverGet.getDownload(req, res);
+	});
+});
+app.get('/download/:uuid', function(req, res){
+    serverCheck.checkKey(req, res, false, function(){
+		serverGet.getDownload(req, res);
+	});
+});
+
+// postUpload
+app.post('/upload', function(req, res){
+	server_post.postUpload(req, res);
+});
+app.post('/upload(.:ext)', function(req, res){
+	server_post.postUpload(req, res);
+});
+
+// putRestore
+app.put('/restore(.:ext)', function(req, res){
+    serverCheck.checkKey(req, res, true, function(){
+        server_put.putRestore(req, res);
     });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
 });
 
+/*
+app.put('/privacy(.:ext)', function(req, res){
+    serverCheck.checkKey(req, res, true, function(){
+        server_put.putFile(req, res, 'privacy');
+    });
+});
+*/
+
+// deleteRemove
+app.delete('/remove/:uuid.:ext', function(req, res){
+    server_delete.deleteRemove(req, res);
+});
+
+app.delete('/remove/:uuid', function(req, res){
+    server_delete.deleteRemove(req, res);
+});
+
+// deletePurge
+app.delete('/purge/:uuid.:ext', function(req, res){
+    server_delete.deletePurge(req, res);
+});
+
+app.delete('/purge/:uuid', function(req, res){
+    server_delete.deletePurge(req, res);
+});
+
+// **********************************************************
+// error
+
+app.use(function(req, res) {
+
+    var err_res = {};
+    
+    err_res.responseStatus = {
+        'status': 404,
+        'type': 'Not Found',
+        'err': req.url +' Not Found'        
+    };
+
+    res.status(404);
+    res.send(err_res);    
+});
+
+app.use(function(err, req, res, next) {
+    
+    //console.log('\n app.use error: ' + err );
+    console.error(err.stack);
+    
+    var err_res = {};       
+    err_res.responseStatus = {
+        'status': 500,
+        'type': 'Internal Server Error',
+        'err': err.name +': '+ err.message      
+    };  
+    
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    
+    res.status(500);
+    res.send(err_res);
+});
+
+process.on('uncaughtException', function (err) {
+    //console.log('\n uncaughtException: '+ err);
+    console.error(err.stack);
+});
+
+// **********************************************************
+// server
+
+var server = app.listen(NODE_PORT, function () {
+
+  var host = server.address().address;
+  var port = server.address().port;
+
+  console.log('\n  listening at http://%s:%s', host, port);
+
+});
 
 module.exports = app;
