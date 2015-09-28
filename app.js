@@ -117,6 +117,10 @@ app.get('/getTVContourByFilenumber/:filenumber', function(req, res){
 contour.getTVContourByFilenumber(req, res);
 });
 
+app.get('/getFMContourByFilenumber/:filenumber', function(req, res){
+contour.getFMContourByFilenumber(req, res);
+});
+
 app.get('/getAMContourByAntennaId/:antid/:station_class/:time_period', function(req, res){
 contour.getAMContourByAntennaId(req, res);
 });

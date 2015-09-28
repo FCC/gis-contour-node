@@ -21,8 +21,30 @@ url = "http://contour-geoserver.elasticbeanstalk.com/contour/ows?service=WFS&ver
 										
                                          //callback(null);
                                            });
-                                           
+}
 
+function getFMContourByFilenumber(req, res) {
+
+var filenumber = req.params.filenumber;
+var filenumber_lower = filenumber.toLowerCase();
+var filenumber_upper = filenumber.toUpperCase();
+var typeName = "contour:fm_contours";
+
+var http = require("http");
+
+url = "http://contour-geoserver.elasticbeanstalk.com/contour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=filenumber='" + filenumber_upper + "'"; 
+   http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+                               res.send(data);
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
 }
 
 function getAMContourByAntennaId(req, res) {
@@ -54,7 +76,7 @@ var typeName = "contour:am_contours";
 
 var http = require("http");
 
-url = "http://contour-geoserver.elasticbeanstalk.com/contour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=antid=" + antid_upper + "+AND+contour_level=" + contour_level; 
+url = "http://contour-geoserver.elasticbeanstalk.com/contour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=antid=" + antid_upper + "+AND+contour_level=" + contour_level + "+AND+time_period='" + time_period_lower + "'"; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -67,11 +89,10 @@ url = "http://contour-geoserver.elasticbeanstalk.com/contour/ows?service=WFS&ver
 										
                                          //callback(null);
                                            });
-                                           
-
 }
 
 module.exports.getTVContourByFilenumber = getTVContourByFilenumber;
+module.exports.getFMContourByFilenumber = getFMContourByFilenumber;
 module.exports.getAMContourByAntennaId = getAMContourByAntennaId;
 
 
