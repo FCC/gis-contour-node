@@ -14,14 +14,14 @@
         }
     ],
     "paths":{
-        "/folder/findById/{folderId}.{format}": {
+        "/contour/am/{stationID}.{format}": {
             "get":{
                 "tags": ["contour"],
-                "summary": "Get Subfolder and files",
-                "description": "Get OPIF folder information including list of subfolders and files. Response returned in specified format.",
+                "summary": "Get AM Station Contour",
+                "description": "Get Get AM Station Contour based on station ID. Response returned in GeoJSON.",
                 "parameters": [
                     {
-                        "$ref":"#/parameters/folderIdParam"
+                        "$ref":"#/parameters/stationID"
                     },
                     {
                         "$ref":"#/parameters/formatParam"
@@ -413,6 +413,13 @@
             "in":"query",
             "description":"Partial or complete file name.",
             "required":true,
+            "type":"string"
+        },
+		"stationID": {
+            "name":"stationID",
+            "in":"path",
+            "description":"ID of the station",
+            "required":false,
             "type":"string"
         },
         "folderIdParam": {
