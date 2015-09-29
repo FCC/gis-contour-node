@@ -5,23 +5,12 @@ var http = require("http");
 var https = require("https");
 var url = require('url');
 var express = require('express');
-var js2xmlparser = require('js2xmlparser');
 var path = require('path');
 var fsr = require('file-stream-rotator');
-var fs = require('fs');
 var morgan = require('morgan');
-var multer = require('multer');
-var AWS = require('aws-sdk');
+var cors = require('cors');
+
 var bodyparser = require('body-parser');
-
-//var serverCheck = require("./server/check.js");
-//var serverSend = require("./server/send.js");
-
-//var serverGet = require("./server/get.js");
-//var server_post = require("./server/post.js");
-//var server_put = require("./server/put.js");
-//var server_delete = require("./server/delete.js");
-
 var package_json = require('./package.json');
 
 var contour = require('./controllers/contour.js');
@@ -35,7 +24,6 @@ var NODE_ENV = process.env.NODE_ENV;
 //console.log('NODE_ENV : '+ NODE_ENV );
 
 var NODE_PORT =  process.env.PORT || configEnv[NODE_ENV].NODE_PORT;
-var PG_DB = configEnv[NODE_ENV].PG_DB;
 
 // **********************************************************
 // console start
@@ -46,6 +34,13 @@ console.log('package_json.description : '+ package_json.description );
 
 //console.log('NODE_PORT : '+ NODE_PORT );
 //console.log('PG_DB : '+ PG_DB );
+
+// **********************************************************
+// app
+
+var app = express();
+
+app.use(cors());
 
 // **********************************************************
 // log
@@ -60,8 +55,6 @@ var accessLogStream = fsr.getStream({
     verbose: false
 });
 
-var app = express();
-
 app.use(morgan('combined', {stream: accessLogStream}))
 
 // **********************************************************
@@ -69,21 +62,12 @@ app.use(morgan('combined', {stream: accessLogStream}))
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
-app.use(multer({ inMemory: true }));
 
 // **********************************************************
 // route
 
-app.use('/', express.static(__dirname + '/client'));
-app.use('/api-docs', express.static(__dirname + '/client/api-docs.html'));
-
-/*
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-*/
+app.use('/', express.static(__dirname + '/public'));
+app.use('/api-docs', express.static(__dirname + '/public/api-docs.html'));
 
 app.param('uuid', function(req, res, next, uuid){
     // check format of uuid
