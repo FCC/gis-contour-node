@@ -7,6 +7,7 @@ var url = require('url');
 var express = require('express');
 var path = require('path');
 var fsr = require('file-stream-rotator');
+var fs = require('fs');
 var morgan = require('morgan');
 var cors = require('cors');
 
