@@ -110,6 +110,9 @@ app.get('/getAMContourByAntennaId/:antid/:station_class/:time_period', function(
 contour.getAMContourByAntennaId(req, res);
 });
 
+app.get('/getTVContourByApplicationId/:application_id', function(req, res){
+contour.getTVContourByApplicationId(req, res);
+});
 
 // getStatus
 app.get('/status/:uuid.:ext', function(req, res){

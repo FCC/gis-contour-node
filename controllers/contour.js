@@ -23,6 +23,31 @@ url = "http://contour-geoserver.elasticbeanstalk.com/contour/ows?service=WFS&ver
                                            });
 }
 
+function getTVContourByApplicationId(req, res) {
+
+var application_id = req.params.application_id;
+var application_id_lower = application_id.toLowerCase();
+var application_id_upper = application_id.toUpperCase();
+var typeName = "contour:tv_contours";
+
+var http = require("http");
+
+url = "http://contour-geoserver.elasticbeanstalk.com/contour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=application_id=" + application_id_upper; 
+   http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+                               res.send(data);
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+}
+
+
 function getFMContourByFilenumber(req, res) {
 
 var filenumber = req.params.filenumber;
@@ -92,6 +117,8 @@ url = "http://contour-geoserver.elasticbeanstalk.com/contour/ows?service=WFS&ver
 }
 
 module.exports.getTVContourByFilenumber = getTVContourByFilenumber;
+module.exports.getTVContourByApplicationId = getTVContourByApplicationId;
+
 module.exports.getFMContourByFilenumber = getFMContourByFilenumber;
 module.exports.getAMContourByAntennaId = getAMContourByAntennaId;
 
