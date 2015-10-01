@@ -35,7 +35,6 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-
 var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=application_id=" + application_id_upper; 
    http.get(url, function(res1) {
        var data = "";
