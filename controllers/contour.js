@@ -154,7 +154,6 @@ var http = require("http");
 
 var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100000&outputFormat=application/json&propertyName=filenumber&sortBy=filenumber";
 
-console.log(url);
 
    http.get(url, function(res1) {
        var data = "";
@@ -181,7 +180,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1000&outputFormat=application/json&propertyNam=callsign&sortBy=callsign";
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100000&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -200,6 +199,33 @@ var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeat
                                          //callback(null);
                                            });
 }
+
+function getAllTVApplicationId(req, res) {
+
+var typeName = "contour:tv_contours";
+
+var http = require("http");
+
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100000&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
+   http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+						 var data_json = JSON.parse(data);
+							var data1 = [];
+							for (var i = 0; i < data_json.features.length; i++) {
+								data1.push(data_json.features[i].properties.application_id);
+							}
+                               res.send({application_id: data1});
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+}
+
 
 function getAllFMFileNumber(req, res) {
 
@@ -227,6 +253,111 @@ var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeat
                                            });
 }
 
+function getAllFMCallsign(req, res) {
+
+var typeName = "contour:fm_contours";
+
+var http = require("http");
+
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100000&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
+   http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+						 var data_json = JSON.parse(data);
+							var data1 = [];
+							for (var i = 0; i < data_json.features.length; i++) {
+								data1.push(data_json.features[i].properties.callsign);
+							}
+                               res.send({callsign: data1});
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+}
+
+function getAllFMApplicationId(req, res) {
+
+var typeName = "contour:fm_contours";
+
+var http = require("http");
+
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100000&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
+   http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+						 var data_json = JSON.parse(data);
+							var data1 = [];
+							for (var i = 0; i < data_json.features.length; i++) {
+								data1.push(data_json.features[i].properties.application_id);
+							}
+                               res.send({application_id: data1});
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+}
+
+function getAllAMAntennaId(req, res) {
+
+var typeName = "contour:am_contours";
+
+var http = require("http");
+
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100000&outputFormat=application/json&propertyName=antid&sortBy=antid&cql_filter=contour_level=0.25";
+   http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+						 var data_json = JSON.parse(data);
+							var data1 = [];
+							for (var i = 0; i < data_json.features.length; i++) {
+								data1.push(data_json.features[i].properties.antid);
+							}
+                               res.send({antenna_id: data1});
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+}
+
+function getAllAMCallsign(req, res) {
+
+var typeName = "contour:am_contours";
+
+var http = require("http");
+
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100000&outputFormat=application/json&propertyName=callsign&sortBy=callsign&cql_filter=contour_level=0.25";
+   http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+						 var data_json = JSON.parse(data);
+							var data1 = [];
+							for (var i = 0; i < data_json.features.length; i++) {
+								data1.push(data_json.features[i].properties.callsign);
+							}
+                               res.send({callsign: data1});
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+}
+
+
 
 module.exports.getTVContourByFilenumber = getTVContourByFilenumber;
 module.exports.getTVContourByApplicationId = getTVContourByApplicationId;
@@ -235,6 +366,9 @@ module.exports.getFMContourByApplicationId = getFMContourByApplicationId;
 module.exports.getAMContourByAntennaId = getAMContourByAntennaId;
 module.exports.getAllTVFileNumber = getAllTVFileNumber;
 module.exports.getAllTVCallsign = getAllTVCallsign;
+module.exports.getAllTVApplicationId = getAllTVApplicationId;
 module.exports.getAllFMFileNumber = getAllFMFileNumber;
-
-
+module.exports.getAllFMCallsign = getAllFMCallsign;
+module.exports.getAllFMApplicationId = getAllFMApplicationId;
+module.exports.getAllAMAntennaId = getAllAMAntennaId;
+module.exports.getAllAMCallsign = getAllAMCallsign;

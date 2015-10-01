@@ -131,83 +131,24 @@ app.get('/getAllTVCallsign', function(req, res){
 contour.getAllTVCallsign(req, res);
 });
 
-// getStatus
-app.get('/status/:uuid.:ext', function(req, res){
-	serverCheck.checkKey(req, res, false, function(){
-		serverGet.getStatus(req, res);
-	});
-});
-app.get('/status/:uuid', function(req, res){
-	serverCheck.checkKey(req, res, false, function(){
-		serverGet.getStatus(req, res);
-	});
+app.get('/getAllFMCallsign', function(req, res){
+contour.getAllFMCallsign(req, res);
 });
 
-// getHistory
-app.get('/history/:uuid.:ext', function(req, res){
-    serverCheck.checkKey(req, res, false, function(){
-		serverGet.getHistory(req, res);
-	});
-});
-app.get('/history/:uuid', function(req, res){
-    serverCheck.checkKey(req, res, false, function(){
-		serverGet.getHistory(req, res);
-	});
+app.get('/getAllTVApplicationId', function(req, res){
+contour.getAllTVApplicationId(req, res);
 });
 
-// getDownload
-app.get('/download/:uuid.:ext', function(req, res){
-	//console.log('\n  getDownload a' );
-    serverCheck.checkKey(req, res, false, function(){
-		//console.log('\n  getDownload b' );
-		serverGet.getDownload(req, res);
-	});
-});
-app.get('/download/:uuid', function(req, res){
-    serverCheck.checkKey(req, res, false, function(){
-		serverGet.getDownload(req, res);
-	});
+app.get('/getAllFMApplicationId', function(req, res){
+contour.getAllFMApplicationId(req, res);
 });
 
-// postUpload
-app.post('/upload', function(req, res){
-	server_post.postUpload(req, res);
-});
-app.post('/upload(.:ext)', function(req, res){
-	server_post.postUpload(req, res);
+app.get('/getAllAMAntennaId', function(req, res){
+contour.getAllAMAntennaId(req, res);
 });
 
-// putRestore
-app.put('/restore(.:ext)', function(req, res){
-    serverCheck.checkKey(req, res, true, function(){
-        server_put.putRestore(req, res);
-    });
-});
-
-/*
-app.put('/privacy(.:ext)', function(req, res){
-    serverCheck.checkKey(req, res, true, function(){
-        server_put.putFile(req, res, 'privacy');
-    });
-});
-*/
-
-// deleteRemove
-app.delete('/remove/:uuid.:ext', function(req, res){
-    server_delete.deleteRemove(req, res);
-});
-
-app.delete('/remove/:uuid', function(req, res){
-    server_delete.deleteRemove(req, res);
-});
-
-// deletePurge
-app.delete('/purge/:uuid.:ext', function(req, res){
-    server_delete.deletePurge(req, res);
-});
-
-app.delete('/purge/:uuid', function(req, res){
-    server_delete.deletePurge(req, res);
+app.get('/getAllAMCallsign', function(req, res){
+contour.getAllAMCallsign(req, res);
 });
 
 // **********************************************************

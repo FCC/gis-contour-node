@@ -168,11 +168,111 @@
             }            
         },
 		
+		"/getAllTVApplicationId": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get all TV application IDs from database",
+                "description": "Get all TV application IDs. Return all application IDs in an array.",
+				"parameters": [
+
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
 		"/getAllFMFileNumber": {
             "get":{
                 "tags": ["contour"],
                 "summary": "Get all FM file numbers from database",
                 "description": "Get all FM file numbers. Return all file numbers in an array.",
+				"parameters": [
+
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
+		"/getAllFMCallsign": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get all FM call signs from database",
+                "description": "Get all FM call signs. Return all call signs in an array.",
+				"parameters": [
+
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
+		"/getAllFMApplicationId": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get all FM application IDs from database",
+                "description": "Get all FM application IDs. Return all application IDs in an array.",
+				"parameters": [
+
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
+		"/getAllAMAntennaId": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get all AM antenna IDs from database",
+                "description": "Get all AM antenna IDs. Return all antenna IDs in an array.",
+				"parameters": [
+
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
+		"/getAllAMCallsign": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get all AM call signs from database",
+                "description": "Get all AM call signs. Return all call signs in an array.",
 				"parameters": [
 
                    ],
