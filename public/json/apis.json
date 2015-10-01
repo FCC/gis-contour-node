@@ -9,17 +9,17 @@
     "basePath": "/",
     "tags":[
         {
-            "name":"contour",
-            "description":"Contour"
+            "name": "contour",
+            "description": ""
         }
     ],
     "paths":{
 
 		"/getTVContourByFilenumber/{tvFilenumber}": {
             "get":{
-                "tags": ["contour"],
-                "summary": "Get TV Station Contour by filenumber",
-                "description": "Get TV Station Contour based on filenumber. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
+                "tags": [""],
+                "summary": "Get TV Station Contour by file number",
+                "description": "Get TV Station Contour based on file number. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
                 "parameters": [
                     {
                         "$ref":"#/parameters/tvFilenumber"
@@ -39,7 +39,7 @@
 		
 		"/getTVContourByApplicationId/{tvApplicationId}": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get TV Station Contour by application ID",
                 "description": "Get TV Station Contour based on application ID. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
                 "parameters": [
@@ -61,9 +61,9 @@
 		
 		"/getFMContourByFilenumber/{fmFilenumber}": {
             "get":{
-                "tags": ["contour"],
-                "summary": "Get FM Station Contour by filenumber",
-                "description": "Get FM Station Contour based on filenumber. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
+                "tags": [""] ,
+                "summary": "Get FM Station Contour by file number",
+                "description": "Get FM Station Contour based on file number. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
                 "parameters": [
                     {
                         "$ref":"#/parameters/fmFilenumber"
@@ -83,7 +83,7 @@
 		
 		"/getFMContourByApplicationId/{fmApplicationId}": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get FM Station Contour by application ID",
                 "description": "Get FM Station Contour based on application ID. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
                 "parameters": [
@@ -104,7 +104,7 @@
         },
 		"/getAMContourByAntennaId/{antennaId}/{stationClass}/{timePeriod}": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get AM Station Contour by antenna ID",
                 "description": "Get AM Station Contour based on antenna ID, station class, and time period. Response returned in GeoJSON. Properties include time_period, callsign, frequency, frequency_unit, station_lat, station_lon, contour_level.",
                 "parameters": [
@@ -131,7 +131,7 @@
         },
 		"/getAllTVFileNumber": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get all TV file numbers from database",
                 "description": "Get all TV file numbers. Return all file numbers in an array.",
 				"parameters": [
@@ -150,7 +150,7 @@
         },
 		"/getAllTVCallsign": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get all TV call signs from database",
                 "description": "Get all TV call signs. Return all call signs in an array.",
 				"parameters": [
@@ -170,7 +170,7 @@
 		
 		"/getAllTVApplicationId": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get all TV application IDs from database",
                 "description": "Get all TV application IDs. Return all application IDs in an array.",
 				"parameters": [
@@ -190,7 +190,7 @@
 		
 		"/getAllFMFileNumber": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get all FM file numbers from database",
                 "description": "Get all FM file numbers. Return all file numbers in an array.",
 				"parameters": [
@@ -210,7 +210,7 @@
 		
 		"/getAllFMCallsign": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get all FM call signs from database",
                 "description": "Get all FM call signs. Return all call signs in an array.",
 				"parameters": [
@@ -230,7 +230,7 @@
 		
 		"/getAllFMApplicationId": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get all FM application IDs from database",
                 "description": "Get all FM application IDs. Return all application IDs in an array.",
 				"parameters": [
@@ -250,7 +250,7 @@
 		
 		"/getAllAMAntennaId": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get all AM antenna IDs from database",
                 "description": "Get all AM antenna IDs. Return all antenna IDs in an array.",
 				"parameters": [
@@ -270,7 +270,7 @@
 		
 		"/getAllAMCallsign": {
             "get":{
-                "tags": ["contour"],
+                "tags": [""] ,
                 "summary": "Get all AM call signs from database",
                 "description": "Get all AM call signs. Return all call signs in an array.",
 				"parameters": [
