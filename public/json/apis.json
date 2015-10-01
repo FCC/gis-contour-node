@@ -4,7 +4,7 @@
         "version": "0.0.1",
         "title": "FCC Contour API"
     },
-    "host": "localhost:1979",
+    "host": "localhost:6479",
     "schemes":["http"],
     "basePath": "/",
     "tags":[
@@ -14,393 +14,242 @@
         }
     ],
     "paths":{
-        "/contour/am/{stationID}.{format}": {
+
+		"/getTVContourByFilenumber/{tvFilenumber}": {
             "get":{
                 "tags": ["contour"],
-                "summary": "Get AM Station Contour",
-                "description": "Get Get AM Station Contour based on station ID. Response returned in GeoJSON.",
+                "summary": "Get TV Station Contour by filenumber",
+                "description": "Get TV Station Contour based on filenumber. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
                 "parameters": [
                     {
-                        "$ref":"#/parameters/stationID"
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                    {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkReqParam"
+                        "$ref":"#/parameters/tvFilenumber"
                     }
                    ],
                 "responses": {
                     "200": {
-                        "description": "get folder response",
-                        "schema": {
-                             "$ref": "#/definitions/Entity"
-                        }
+                        "description": "OK"
+
                     }
                 },
                 "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
+                    "application/json"
                 ]
             }            
         },
-        "/folder/listParents.{format}": {
+		
+		"/getTVContourByApplicationId/{tvApplicationId}": {
             "get":{
                 "tags": ["contour"],
-                "summary": "Get parent folders",
-                "description": "Get root folder information including list of subfolders and files. Response returned in specified format.",
+                "summary": "Get TV Station Contour by application ID",
+                "description": "Get TV Station Contour based on application ID. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
                 "parameters": [
                     {
-                        "$ref":"#/parameters/facilityIdParam"
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                                        {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkReqParam"
+                        "$ref":"#/parameters/tvApplicationId"
                     }
                    ],
                 "responses": {
                     "200": {
-                        "description": "get parent folders response",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Folder"
-                            }
-                        }
+                        "description": "OK"
+
                     }
                 },
                 "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
+                    "application/json"
                 ]
             }            
         },
-        "/folder/create.{format}": {
-            "post":{
-                "tags": ["contour"],
-                "summary": "Create new folder",
-                "description": "Create new folder with the folder details specified.",
-                "parameters": [
-                    {
-                        "name":"folderName",
-                        "in":"query",
-                        "description":"Name of the new folder.",
-                        "required":true,
-                        "type":"string"
-                    },
-                    {
-                         "$ref":"#/parameters/facilityIdParam"
-                    },
-                    {
-                        "name":"parentFolderId",
-                        "in":"query",
-                        "description": "Unique Id of the parent folder",
-                        "required":true,
-                        "type":"string"
-                    },
-                    {
-                        "name":"parentFolderType",
-                        "in":"query",
-                        "description":"Parent folder type.<br /><br />Valid values: M or E",
-                        "required":true,
-                        "type":"string"
-                    },
-                    {
-                       "$ref":"#/parameters/accessTokenParam" 
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                    {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkOptParam"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "create folder response",
-                        "schema": {
-                            "$ref": "#/definitions/Folder"
-                        }
-                    }
-                },
-                "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
-                ]
-            }
-        },
-        "/folder/rename/{folderId}.{format}": {
-            "put":{
-                "tags": ["contour"],
-                "summary": "Rename Folder",
-                "description": "Rename the folder with the specified folder name.",
-                "parameters": [
-                    {
-                        "$ref":"#/parameters/folderIdParam"
-                    },
-                    {
-                        "name":"folderName",
-                        "in":"query",
-                        "description":"New name of the specified folder",
-                        "required":true,
-                        "type":"string"
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                    {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkOptParam"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "rename folder response",
-                        "schema": {
-                            "$ref": "#/definitions/Folder"
-                        }
-                    }
-                },
-                "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
-                ]
-            }
-        },
-        "/folder/restore/{folderId}.{format}": {
-            "put":{
-                "tags": ["contour"],
-                "summary": "Restore Folder",
-                "description": "Restore the status of the folder with the specified id.",
-                "parameters": [
-                    {
-                        "$ref":"#/parameters/folderIdParam"
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                    {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkOptParam"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "restore folder response",
-                        "schema": {
-                            "$ref": "#/definitions/Folder"
-                        }
-                    }
-                },
-                "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
-                ]
-            }
-        },
-        "/folder/remove/{folderId}.{format}": {
-            "delete":{
-                "tags": ["contour"],
-                "summary": "Remove Folder",
-                "description": "Mark the specified folder as deleted.",
-                "parameters": [                    
-                    {
-                        "$ref":"#/parameters/folderIdParam"
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                    {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkOptParam"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "remove folder response",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
-                ]
-            }
-        },
-        "/folder/purge/{folderId}.{format}": {
-            "delete":{
-                "tags": ["contour"],
-                "summary": "Purge Folder",
-                "description": "Purge the folder with the specified id.",
-                "parameters": [                    
-                    {
-                        "$ref":"#/parameters/folderIdParam"
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                    {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkOptParam"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Purge folder response",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
-                ]
-            }
-        },
-        "/folder/history.{format}": {
+		
+		"/getFMContourByFilenumber/{fmFilenumber}": {
             "get":{
                 "tags": ["contour"],
-                "summary": "List changed folders",
-                "description": "Lists folders that were modified.",
-                "parameters": [                 
+                "summary": "Get FM Station Contour by filenumber",
+                "description": "Get FM Station Contour based on filenumber. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
+                "parameters": [
                     {
-                        "name":"count",
-                        "in":"query",
-                        "description":"Number of folders in the list.",
-                        "required":false,
-                        "type":"integer",
-                        "format": "int32"
-                    },
-                    {
-                        "name":"status",
-                        "in":"query",
-                        "description":"Status of folder in the list.",
-                        "required":false,
-                        "type":"string"
-                    },
-                    {
-                        "name":"facilityId",
-                        "in": "query",
-                        "description":"Unique Facility Id.",
-                        "required": true,
-                        "type":"string"
-                    },
-                    {
-                        "name":"startDate",
-                        "in":"query",
-                        "description": "Date in ISO-8601 format.<br /><br />YYYY-MM-DD (eg 2015-08-25)",
-                        "required": false,
-                        "type":"string",
-                        "format": "date"
-                    },
-                    {
-                        "name":"endDate",
-                        "in":"query",
-                        "description": "Date in ISO-8601 format.<br /><br />YYYY-MM-DD (eg 2015-08-25)",
-                        "required": false,
-                        "type":"string",
-                        "format": "date"
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                    {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkReqParam"
+                        "$ref":"#/parameters/fmFilenumber"
                     }
-                ],
+                   ],
                 "responses": {
                     "200": {
-                        "description": "List of changed files response",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Folder"
-                            }
-                        }
+                        "description": "OK"
+
                     }
                 },
                 "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
+                    "application/json"
                 ]
-            }
+            }            
         },
-        "/folder/search/{searchKey}.{format}": {
+		
+		"/getFMContourByApplicationId/{fmApplicationId}": {
             "get":{
                 "tags": ["contour"],
-                "summary": "Search for folders",
-                "description": "List of folders that match the search parameter.",
-                "parameters": [                 
+                "summary": "Get FM Station Contour by application ID",
+                "description": "Get FM Station Contour based on application ID. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
+                "parameters": [
                     {
-                        "name":"searchKey",
-                        "in":"path",
-                        "description":"Search parameter.",
-                        "required":true,
-                        "type":"string"
-                    },
-                    {
-                        "$ref":"#/parameters/formatParam"
-                    },
-                    {
-                        "$ref":"#/parameters/callbackParam"
-                    },
-                    {
-                        "$ref":"#/parameters/pkReqParam"
+                        "$ref":"#/parameters/fmApplicationId"
                     }
-                ],
+                   ],
                 "responses": {
                     "200": {
-                        "description": "Search folders response",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Folder"
-                            }
-                        }
-                   }
+                        "description": "OK"
+
+                    }
                 },
                 "produces": [
-                    "application/json",
-                    "application/jsonp",
-                    "application/xml"
+                    "application/json"
                 ]
-            }
+            }            
+        },
+		"/getAMContourByAntennaId/{antennaId}/{stationClass}/{timePeriod}": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get AM Station Contour by antenna ID",
+                "description": "Get AM Station Contour based on antenna ID, station class, and time period. Response returned in GeoJSON. Properties include time_period, callsign, frequency, frequency_unit, station_lat, station_lon, contour_level.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/antennaId"
+                    },
+					{
+						"$ref":"#/parameters/stationClass"
+                    },
+					{
+						"$ref":"#/parameters/timePeriod"
+                    }
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		"/getAllTVFileNumber": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get all TV file numbers from database",
+                "description": "Get all TV file numbers. Return all file numbers in an array.",
+				"parameters": [
+
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		"/getAllTVCallsign": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get all TV call signs from database",
+                "description": "Get all TV call signs. Return all call signs in an array.",
+				"parameters": [
+
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
+		"/getAllFMFileNumber": {
+            "get":{
+                "tags": ["contour"],
+                "summary": "Get all FM file numbers from database",
+                "description": "Get all FM file numbers. Return all file numbers in an array.",
+				"parameters": [
+
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
         }
+		
+		
+		
+        
     },
     "parameters": {
+		"tvFilenumber": {
+            "name":"tvFilenumber",
+            "in":"path",
+            "description":"filenumber of the station (example: BLTT-1002)",
+            "required":true,
+            "type":"string",
+			"default": "BLTT-1002"
+        },
+		"tvApplicationId": {
+            "name":"tvApplicationId",
+            "in":"path",
+            "description":"application ID of the station (example: 8)",
+            "required":true,
+            "type":"integer",
+			"default": "8"
+        },
+		"fmFilenumber": {
+            "name":"fmFilenumber",
+            "in":"path",
+            "description":"File number of the station (example: BLED-1533)",
+            "required":true,
+            "type":"string",
+			"default": "BLED-1533"
+        },
+		"fmApplicationId": {
+            "name":"fmApplicationId",
+            "in":"path",
+            "description":"application ID of the station (example: 750)",
+            "required":true,
+            "type":"integer",
+			"default": "750"
+        },
+		"antennaId": {
+            "name": "antennaId",
+            "in":"path",
+            "description":"antenna ID of the station (example: 100003)",
+            "required":true,
+            "type":"integer",
+			"default": "100003"
+        },
+		"stationClass": {
+            "name": "stationClass",
+            "in":"path",
+            "description":"class of the station (can be A, B, C, or D)",
+            "required":true,
+            "type":"string",
+			"default": "B"
+        },
+		"timePeriod": {
+            "name": "timePeriod",
+            "in": "path",
+            "description": "applicable time period (can only be daytime for now)",
+            "required": true,
+            "type": "string",
+			"default": "daytime"
+        },
+	
        "fileIdParam": {
             "name":"fileId",
             "in":"path",

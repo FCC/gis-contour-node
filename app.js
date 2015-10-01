@@ -114,6 +114,23 @@ app.get('/getTVContourByApplicationId/:application_id', function(req, res){
 contour.getTVContourByApplicationId(req, res);
 });
 
+app.get('/getFMContourByApplicationId/:application_id', function(req, res){
+contour.getFMContourByApplicationId(req, res);
+});
+
+app.get('/getAllTVFileNumber', function(req, res){
+contour.getAllTVFileNumber(req, res);
+});
+
+
+app.get('/getAllFMFileNumber', function(req, res){
+contour.getAllFMFileNumber(req, res);
+});
+
+app.get('/getAllTVCallsign', function(req, res){
+contour.getAllTVCallsign(req, res);
+});
+
 // getStatus
 app.get('/status/:uuid.:ext', function(req, res){
 	serverCheck.checkKey(req, res, false, function(){
