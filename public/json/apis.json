@@ -4,7 +4,7 @@
         "version": "0.0.1",
         "title": "FCC Contour API"
     },
-    "host": "contour-node-dev-1.elasticbeanstalk.com",
+    "host": "localhost:6479",
     "schemes":["http"],
     "basePath": "/",
     "tags":[
@@ -45,6 +45,28 @@
                 "parameters": [
                     {
                         "$ref":"#/parameters/tvApplicationId"
+                    }
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
+		"/getTVContourByCallsign/{tvCallsign}": {
+            "get":{
+                "tags": [""] ,
+                "summary": "Get TV Station Contour by call sign",
+                "description": "Get TV Station Contour based on call sign. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/tvCallsign"
                     }
                    ],
                 "responses": {
@@ -102,6 +124,27 @@
                 ]
             }            
         },
+		"/getFMContourByCallsign/{fmCallsign}": {
+            "get":{
+                "tags": [""] ,
+                "summary": "Get FM Station Contour by call sign",
+                "description": "Get FM Station Contour based on call sign. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/fmCallsign"
+                    }
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
 		"/getAMContourByAntennaId/{antennaId}/{stationClass}/{timePeriod}": {
             "get":{
                 "tags": [""] ,
@@ -129,11 +172,38 @@
                 ]
             }            
         },
+		"/getAMContourByCallsign/{amCallsign}/{stationClass}/{timePeriod}": {
+            "get":{
+                "tags": [""] ,
+                "summary": "Get AM Station Contour by call sign",
+                "description": "Get AM Station Contour based on call sign, station class, and time period. Response returned in GeoJSON. Properties include time_period, callsign, frequency, frequency_unit, station_lat, station_lon, contour_level.",
+                "parameters": [
+                    {
+                        "$ref":"#/parameters/amCallsign"
+                    },
+					{
+						"$ref":"#/parameters/stationClass"
+                    },
+					{
+						"$ref":"#/parameters/timePeriod"
+                    }
+                   ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
 		"/getAllTVFileNumber": {
             "get":{
                 "tags": [""] ,
                 "summary": "Get all TV file numbers from database",
-                "description": "Get all TV file numbers. Return all file numbers in an array.",
+                "description": "Get all TV file numbers. Return all file numbers in an array. Limited to 100 for demo.",
 				"parameters": [
 
                    ],
@@ -152,7 +222,7 @@
             "get":{
                 "tags": [""] ,
                 "summary": "Get all TV call signs from database",
-                "description": "Get all TV call signs. Return all call signs in an array.",
+                "description": "Get all TV call signs. Return all call signs in an array. Limited to 100 for demo.",
 				"parameters": [
 
                    ],
@@ -172,7 +242,7 @@
             "get":{
                 "tags": [""] ,
                 "summary": "Get all TV application IDs from database",
-                "description": "Get all TV application IDs. Return all application IDs in an array.",
+                "description": "Get all TV application IDs. Return all application IDs in an array. Limited to 100 for demo.",
 				"parameters": [
 
                    ],
@@ -192,7 +262,7 @@
             "get":{
                 "tags": [""] ,
                 "summary": "Get all FM file numbers from database",
-                "description": "Get all FM file numbers. Return all file numbers in an array.",
+                "description": "Get all FM file numbers. Return all file numbers in an array. Limited to 100 for demo.",
 				"parameters": [
 
                    ],
@@ -212,7 +282,7 @@
             "get":{
                 "tags": [""] ,
                 "summary": "Get all FM call signs from database",
-                "description": "Get all FM call signs. Return all call signs in an array.",
+                "description": "Get all FM call signs. Return all call signs in an array. Limited to 100 for demo.",
 				"parameters": [
 
                    ],
@@ -232,7 +302,7 @@
             "get":{
                 "tags": [""] ,
                 "summary": "Get all FM application IDs from database",
-                "description": "Get all FM application IDs. Return all application IDs in an array.",
+                "description": "Get all FM application IDs. Return all application IDs in an array. Limited to 100 for demo.",
 				"parameters": [
 
                    ],
@@ -252,7 +322,7 @@
             "get":{
                 "tags": [""] ,
                 "summary": "Get all AM antenna IDs from database",
-                "description": "Get all AM antenna IDs. Return all antenna IDs in an array.",
+                "description": "Get all AM antenna IDs. Return all antenna IDs in an array. Limited to 100 for demo.",
 				"parameters": [
 
                    ],
@@ -272,7 +342,7 @@
             "get":{
                 "tags": [""] ,
                 "summary": "Get all AM call signs from database",
-                "description": "Get all AM call signs. Return all call signs in an array.",
+                "description": "Get all AM call signs. Return all call signs in an array. Limited to 100 for demo.",
 				"parameters": [
 
                    ],
@@ -309,6 +379,14 @@
             "type":"integer",
 			"default": "8"
         },
+		"tvCallsign": {
+            "name":"tvCallsign",
+            "in":"path",
+            "description":"call sign of the station (example: W04AE)",
+            "required":true,
+            "type":"string",
+			"default": "W04AE"
+        },
 		"fmFilenumber": {
             "name":"fmFilenumber",
             "in":"path",
@@ -325,6 +403,14 @@
             "type":"integer",
 			"default": "750"
         },
+		"fmCallsign": {
+            "name":"fmCallsign",
+            "in":"path",
+            "description":"call sign of the station (example: KAXE)",
+            "required":true,
+            "type":"string",
+			"default": "KAXE"
+        },
 		"antennaId": {
             "name": "antennaId",
             "in":"path",
@@ -332,6 +418,14 @@
             "required":true,
             "type":"integer",
 			"default": "100003"
+        },
+		"amCallsign": {
+            "name":"amCallsign",
+            "in":"path",
+            "description":"call sign of the station (example: WYCL)",
+            "required":true,
+            "type":"string",
+			"default": "WYCL"
         },
 		"stationClass": {
             "name": "stationClass",

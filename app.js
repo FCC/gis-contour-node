@@ -118,10 +118,25 @@ app.get('/getFMContourByApplicationId/:application_id', function(req, res){
 contour.getFMContourByApplicationId(req, res);
 });
 
+app.get('/getTVContourByCallsign/:callsign', function(req, res){
+contour.getTVContourByCallsign(req, res);
+});
+
+app.get('/getFMContourByCallsign/:callsign', function(req, res){
+contour.getFMContourByCallsign(req, res);
+});
+
+app.get('/getFMContourByCallsign/:callsign', function(req, res){
+contour.getFMContourByCallsign(req, res);
+});
+
+app.get('/getAMContourByCallsign/:callsign/:station_class/:time_period', function(req, res){
+contour.getAMContourByCallsign(req, res);
+});
+
 app.get('/getAllTVFileNumber', function(req, res){
 contour.getAllTVFileNumber(req, res);
 });
-
 
 app.get('/getAllFMFileNumber', function(req, res){
 contour.getAllFMFileNumber(req, res);
