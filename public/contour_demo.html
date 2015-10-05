@@ -48,6 +48,7 @@
 
 	var map;
 	var contour_json;
+	var station_marker;
 	var host = 'http://localhost:6479';
 
 	contour_style = {color: "#000", opacity: 1.0,  fillOpacity: 0.0, weight: 4};
@@ -204,6 +205,10 @@ style: contour_style
 
 }).addTo(map);
 
+		if (map.hasLayer(station_marker)) {
+			map.removeLayer(station_marker);
+		}
+		station_marker = L.marker([station_lat, station_lon]).addTo(map);
 map.fitBounds(contour_json.getBounds());
 		  
         }
@@ -243,10 +248,14 @@ $.ajax(url, {
 		if (map.hasLayer(contour_json)) {
 		map.removeLayer(contour_json);
 		}
-		
 		contour_json = L.geoJson(data, {
-style: contour_style
-}).addTo(map);
+			style: contour_style
+		}).addTo(map);
+	
+		if (map.hasLayer(station_marker)) {
+			map.removeLayer(station_marker);
+		}
+		station_marker = L.marker([station_lat, station_lon]).addTo(map);
 
 map.fitBounds(contour_json.getBounds()); 
         }
@@ -289,6 +298,11 @@ $.ajax(url, {
 		contour_json = L.geoJson(data, {
 style: contour_style
 }).addTo(map);
+
+		if (map.hasLayer(station_marker)) {
+			map.removeLayer(station_marker);
+		}
+		station_marker = L.marker([station_lat, station_lon]).addTo(map);
 
 map.fitBounds(contour_json.getBounds()); 
         }

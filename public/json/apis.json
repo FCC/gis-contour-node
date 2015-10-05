@@ -4,7 +4,7 @@
         "version": "0.0.1",
         "title": "FCC Contour API"
     },
-    "host": "localhost:6479",
+    "host": "contour-node-dev-1.elasticbeanstalk.com",
     "schemes":["http"],
     "basePath": "/",
     "tags":[
