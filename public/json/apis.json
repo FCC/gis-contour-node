@@ -15,16 +15,143 @@
     ],
     "paths":{
 
-		"/getTVContourByFilenumber/{tvFilenumber}": {
+		"/contour/{serviceType}/{idType}/{id}.{format}": {
             "get":{
                 "tags": [""],
-                "summary": "Get TV Station Contour by file number",
+                "summary": "Get Contour by Service Type",
                 "description": "Get TV Station Contour based on file number. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
                 "parameters": [
                     {
-                        "$ref":"#/parameters/tvFilenumber"
+						"name":"serviceType",
+						"in":"path",
+						"description":"serviceType.<br /><br />Valid values: tv, am, fm",
+						"required":true,
+						"type":"string",
+						"defaultValue": "tv",
+						"enum": [
+							"tv",
+							"am",
+							"fm"
+						]
+					},
+					{
+						"name":"idType",
+						"in":"path",
+						"description":"idType.<br /><br />Valid values: fileNumber, applicationId, callsign",
+						"required":true,
+						"type":"string",
+						"defaultValue": "fileNumber",
+						"enum": [
+							"fileNumber",
+							"applicationId",
+							"callsign"
+						]
+					},
+					{
+						"name":"id",
+						"in":"path",
+						"description":"id",
+						"required":true,
+						"type":"string"
+					},
+					{
+						"name":"format",
+						"in":"path",
+						"description":"Format for the returned results.<br /><br />Valid values: json, jsonp, xml",
+						"required":false,
+						"type":"string",
+						"defaultValue": "json",
+						"enum": [
+							"json",
+							"jsonp",
+							"xml"
+						]
+					},
+					{
+						"name":"stationClass",
+						"in":"query",
+						"description":"class of the station (can be A, B, C, or D). <br /><br />AM only.",
+						"required":false,
+						"type":"string",
+						"defaultValue": "",
+						"enum": [
+							"a",
+							"b",
+							"c",
+							"d"
+						]
+					},
+					{
+						"name":"timePeriod",
+						"in":"query",
+						"description":"timePeriod. <br /><br />AM only. (Day only)",
+						"required":false,
+						"type":"string",
+						"defaultValue": "",
+						"enum": [
+							"day",
+							"night"
+						]
+					}
+				],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
                     }
-                   ],
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
+		"/id/{serviceType}/{idType}.{format}": {
+            "get":{
+                "tags": [""],
+                "summary": "Get Contour by Service Type",
+                "description": "Get TV Station Contour based on file number. Response returned in GeoJSON. Properties include application_id, service, callsign, filenumber, station_lat, station_lon.",
+                "parameters": [
+                    {
+						"name":"serviceType",
+						"in":"path",
+						"description":"serviceType.<br /><br />Valid values: tv, am, fm",
+						"required":true,
+						"type":"string",
+						"defaultValue": "tv",
+						"enum": [
+							"tv",
+							"am",
+							"fm"
+						]
+					},
+					{
+						"name":"idType",
+						"in":"path",
+						"description":"idType.<br /><br />Valid values: fileNumber, applicationId, callsign",
+						"required":true,
+						"type":"string",
+						"defaultValue": "fileNumber",
+						"enum": [
+							"fileNumber",
+							"applicationId",
+							"callsign"
+						]
+					},
+					{
+						"name":"format",
+						"in":"path",
+						"description":"Format for the returned results.<br /><br />Valid values: json, jsonp, xml",
+						"required":false,
+						"type":"string",
+						"defaultValue": "json",
+						"enum": [
+							"json",
+							"jsonp",
+							"xml"
+						]
+					}				
+				],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -363,6 +490,14 @@
         
     },
     "parameters": {
+		"contour": {
+            "name":"tvApplicationId",
+            "in":"path",
+            "description":"application ID of the station (example: 8)",
+            "required":true,
+            "type":"integer",
+			"default": "8"
+        },
 		"tvFilenumber": {
             "name":"tvFilenumber",
             "in":"path",
