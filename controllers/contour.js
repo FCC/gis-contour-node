@@ -2,6 +2,174 @@
 var geo_host = "http://contour-geoserver.elasticbeanstalk.com/";
 var geo_space = "contour";
 
+
+function contour(req, res) {
+var serviceType = req.params.serviceType;
+var serviceType_lower = serviceType.toLowerCase();
+var serviceType_upper = serviceType.toUpperCase();
+var idType = req.params.idType;
+var idType_lower = idType.toLowerCase();
+var idType_upper = idType.toUpperCase();
+var id_format = req.params.id_format;
+var id = id_format.split('.')[0];
+var id_lower = id.toLowerCase();
+var id_upper = id.toUpperCase();
+var format = id_format.split('.')[1];
+var format_lower = format.toLowerCase();
+var format_upper = format.toUpperCase();
+
+var outputFormat = 'application/json';
+if (format_lower == 'json') {
+	outputFormat = 'application/json';
+}
+else if (format_lower == 'gml') {
+	outputFormat = 'GML2';
+}
+
+var stationClass = 'B'; //default
+var timePeriod = 'daytime'; //default
+
+if (serviceType_upper == 'AM') {
+if (req.params.stationClass) {
+stationClass = req.params.stationClass;
+}
+if (req.params.timePeriod) {
+timePeriod = req.params.timePeriod + 'time';
+}
+
+var stationClass_lower = stationClass.toLowerCase();
+var stationClass_upper = stationClass.toUpperCase();
+var timePeriod_lower = timePeriod.toLowerCase();
+var timePeriod_upper = timePeriod.toUpperCase();
+
+var contour_level = 0;
+if (stationClass_upper == "A") {
+var contour_level = 0.025;
+}
+if (stationClass_upper == "B") {
+var contour_level = 0.5;
+}
+if (stationClass_upper == "C") {
+var contour_level = 0.5;
+}
+if (stationClass_upper == "D") {
+var contour_level = 0.5;
+}
+
+}
+
+var typeName = "contour:" + serviceType_lower + "_contours";
+
+
+
+if (idType_lower == 'applicationid') {
+var filter = "application_id=" + id_upper;
+}
+else if (idType_lower == 'filenumber') {
+var filter = "filenumber='" + id_upper + "'";
+}
+else if (idType_lower == 'callsign') {
+var filter = "callsign='" + id_upper + "'";
+}
+else if (idType_lower == 'antennaid') {
+var filter = "antid=" + id_upper;
+}
+
+if (serviceType_upper == 'AM') {
+filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePeriod_lower + "'";
+}
+
+
+var http = require("http");
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
+
+
+   http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+                               res.send(data);
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+
+}
+
+
+function id(req, res) {
+
+var serviceType = req.params.serviceType;
+var serviceType_lower = serviceType.toLowerCase();
+var serviceType_upper = serviceType.toUpperCase();
+var idType_format = req.params.idType_format;
+var idType = idType_format.split('.')[0];
+var idType_lower = idType.toLowerCase();
+var idType_upper = idType.toUpperCase();
+var format = idType_format.split('.')[1];
+var format_lower = format.toLowerCase();
+var format_upper = format.toUpperCase();
+
+var outputFormat = 'application/json';
+
+var contour_level = 0.025;
+
+if (idType_lower == 'applicationid') {
+var propertyName = 'application_id';
+}
+else if (idType_lower == 'filenumber') {
+var propertyName = 'filenumber';
+}
+else if (idType_lower == 'callsign') {
+var propertyName = 'callsign';
+}
+else if (idType_lower == 'antennaid') {
+var propertyName = 'antid';
+}
+
+var filter = '';
+if (serviceType_upper == 'AM') {
+filter = "&cql_filter=contour_level=" + contour_level + "+AND+time_period='daytime'"
+}
+
+var typeName = "contour:" + serviceType_lower + "_contours";
+
+var http = require("http");
+
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=" + outputFormat + "&propertyName=" + propertyName + "&sortBy=" + propertyName + filter;
+ 
+ http.get(url, function(res1) {
+       var data = "";
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+						 var data_json = JSON.parse(data);
+							var data1 = [];
+							for (var i = 0; i < data_json.features.length; i++) {
+								data1.push(data_json.features[i].properties[propertyName]);
+							}
+                               res.send({list: data1});
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+}
+
+
+
+
+
+
+
+
+
+
+
 function getTVContourByFilenumber(req, res) {
 
 var filenumber = req.params.filenumber;
@@ -451,7 +619,8 @@ var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeat
 }
 
 
-
+module.exports.contour = contour;
+module.exports.id = id;
 module.exports.getTVContourByFilenumber = getTVContourByFilenumber;
 module.exports.getTVContourByApplicationId = getTVContourByApplicationId;
 module.exports.getTVContourByCallsign = getTVContourByCallsign;

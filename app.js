@@ -97,6 +97,17 @@ app.param('ext', function(req, res, next, ext) {
 });
 
 
+app.get('/contour/:serviceType/:idType/:id_format/:stationClass/:timePeriod', function(req, res){
+contour.contour(req, res);
+});
+
+app.get('/contour/:serviceType/:idType/:id_format', function(req, res){
+contour.contour(req, res);
+});
+
+app.get('/id/:serviceType/:idType_format', function(req, res){
+contour.id(req, res);
+});
 
 app.get('/getTVContourByFilenumber/:filenumber', function(req, res){
 contour.getTVContourByFilenumber(req, res);
