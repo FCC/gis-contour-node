@@ -83,6 +83,7 @@ filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePer
 var http = require("http");
 var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
 
+console.log(url);
 
    http.get(url, function(res1) {
        var data = "";
