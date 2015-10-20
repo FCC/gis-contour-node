@@ -50,6 +50,7 @@
 	var contour_json;
 	var station_marker;
 	var host = 'http://contour-node-dev-1.elasticbeanstalk.com';
+	//var host = 'http://localhost:6479';
 
 	contour_style = {color: "#000", opacity: 1.0,  fillOpacity: 0.0, weight: 4};
 	
@@ -381,7 +382,9 @@ $(document).ready(function() {
             </nav>
         </header>
         <div class="clearfix"></div>
-<b>
+
+		<center>
+		<b>
 Contour API Demo
 </b>
 <p>
@@ -391,6 +394,7 @@ Contour API Demo
 <br>
 <div id="map" style="width: 700px; height: 700px; vertical-align: top"></div>
 </td>
+<td width=10></td>
 <td height=700 width=120 valign=top>
 TV Callsigns:<br>
 <span id="num-tv"></span>
@@ -417,6 +421,8 @@ AM Callsigns:<br>
 
 </tr>
 </table>
+
+</center>
         
 
     <script src='js/vendor/swagger/lib/jquery.slideto.min.js' type='text/javascript'></script>

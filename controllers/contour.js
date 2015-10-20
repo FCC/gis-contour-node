@@ -441,7 +441,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -467,7 +467,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -494,7 +494,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=filenumber&sortBy=filenumber";
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=filenumber&sortBy=filenumber";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -520,7 +520,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -546,7 +546,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -572,7 +572,7 @@ var typeName = "contour:am_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=antid&sortBy=antid&cql_filter=contour_level=0.25";
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=antid&sortBy=antid&cql_filter=contour_level=0.25";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -598,7 +598,7 @@ var typeName = "contour:am_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=callsign&sortBy=callsign&cql_filter=contour_level=0.25";
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign&cql_filter=contour_level=0.25";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FCC Contour API</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700|Lato:500" rel="stylesheet" type="text/css">
+
+    <!--#include file="inc/swagger-css.shtm" -->
+    <link href='js/vendor/swagger/css/typography.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='js/vendor/swagger/css/reset.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='js/vendor/swagger/css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='js/vendor/swagger/css/reset.css' media='print' rel='stylesheet' type='text/css'/>
+    <link href='js/vendor/swagger/css/print.css' media='print' rel='stylesheet' type='text/css'/>
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/yamm.css" rel="stylesheet">
+    <link href="css/page.css" rel="stylesheet">
+    <link href="css/header.css" rel="stylesheet">
+    <link href="css/footer.css" rel="stylesheet">
+    <link href="css/helpers.css" rel="stylesheet">
+    <link href="css/icon-styles.css" rel="stylesheet">
+    <link href="css/app-theme.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="js/vendor/html5shiv.min.js"></script>
+      <script src="js/vendor/respond.min.js"></script>
+    <![endif]-->
+	
+	
+	
+	<style>
+	.id-span-am, .id-span-fm, .id-span-tv {color: #00F; cursor: pointer; font-size: 12px}
+	.id-span-am:hover, .id-span-fm:hover, .id-span-tv:hover {text-decoration: underline}
+	#contour-info {font-size: 13px}
+	
+	</style>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<link href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet">
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.1/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+	<script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-pip/v0.1.0/leaflet-pip.min.js"></script>
+<script>
+
+	var map;
+	var contour_json;
+	var station_marker;
+	var host = 'http://contour-node-dev-1.elasticbeanstalk.com';
+	
+	var serviceType = "AM";
+	var callsign = "DWEDC";
+
+	contour_style = {color: "#000", opacity: 1.0,  fillOpacity: 0.0, weight: 4};
+	
+	function createMap() {
+ 
+     L.mapbox.accessToken = 'pk.eyJ1IjoiY29tcHV0ZWNoIiwiYSI6InMyblMya3cifQ.P8yppesHki5qMyxTc2CNLg';
+     map = L.mapbox.map('map', 'fcc.k74ed5ge', {
+             attributionControl: true,
+             maxZoom: 19
+         })
+         .setView([45, -93], 3);
+		 
+	 baseStreet = L.mapbox.tileLayer('fcc.k74ed5ge').addTo(map);
+     baseSatellite = L.mapbox.tileLayer('fcc.k74d7n0g');
+     baseTerrain = L.mapbox.tileLayer('fcc.k74cm3ol');
+		 
+	 L.control.scale({
+         position: 'bottomright'
+     }).addTo(map);
+
+     geocoder = L.mapbox.geocoder('mapbox.places-v1');
+
+     layerControl = new L.Control.Layers({
+         'Street': baseStreet.addTo(map),
+         'Satellite': baseSatellite,
+         'Terrain': baseTerrain
+     }, {
+     }, {
+		position: 'topleft'
+	 }
+	 ).addTo(map);
+	 
+	 
+	 url = host + "/getAMContourByCallsign/" + callsign + "/B/daytime";
+console.log(url);
+$.ajax(url, {
+        type: "GET",
+        url: url,
+        dataType: "json",
+        success: function(data){
+		
+		if (data.features.length == 0) {
+			return;
+		}
+		
+		var p = data.features[0].properties;
+		var application_id = p.application_id;
+		var service = p.service;
+		var callsign = p.callsign;
+		var filenumber = p.filenumber;
+		var station_lat = p.station_lat;
+		var station_lon = p.station_lon;
+		
+
+		
+		if (map.hasLayer(contour_json)) {
+		map.removeLayer(contour_json);
+		}
+		
+		contour_json = L.geoJson(data, {
+style: contour_style
+
+}).addTo(map);
+
+		if (map.hasLayer(station_marker)) {
+			map.removeLayer(station_marker);
+		}
+		station_marker = L.marker([station_lat, station_lon]).addTo(map);
+map.fitBounds(contour_json.getBounds());
+		  
+        }
+
+
+});
+	 
+	  
+	}
+
+
+$(document).ready(function() {
+	createMap();
+});
+
+
+</script>
+</head>
+
+<body>
+<div id="map" style="width: 700px; height: 700px; vertical-align: top"></div>
+</body>
+
+</html>
