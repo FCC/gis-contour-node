@@ -140,7 +140,9 @@ var typeName = "contour:" + serviceType_lower + "_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=" + outputFormat + "&propertyName=" + propertyName + "&sortBy=" + propertyName + filter;
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=" + outputFormat + "&propertyName=" + propertyName + "&sortBy=" + propertyName + filter;
+ 
+ console.log(url);
  
  http.get(url, function(res1) {
        var data = "";

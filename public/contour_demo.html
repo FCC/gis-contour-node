@@ -35,6 +35,7 @@
 	.id-span-am, .id-span-fm, .id-span-tv {color: #00F; cursor: pointer; font-size: 12px}
 	.id-span-am:hover, .id-span-fm:hover, .id-span-tv:hover {text-decoration: underline}
 	#contour-info {font-size: 13px}
+	.download-data {color: #6666ff}
 	
 	</style>
 
@@ -49,25 +50,51 @@
 	var map;
 	var contour_json;
 	var station_marker;
+	var serviceTypeNow = "";
+	var idTypeNow = "";
+	var idNow = "";
 	var host = 'http://contour-node-dev-1.elasticbeanstalk.com';
-	//var host = 'http://localhost:6479';
+	var host = 'http://localhost:6479';
+	var geo_host = "http://contour-geoserver.elasticbeanstalk.com";
+	var geo_space = "contour";
 
-	contour_style = {color: "#000", opacity: 1.0,  fillOpacity: 0.0, weight: 4};
+	contour_style = {color: "#266AD0", opacity: 1.0,  fillOpacity: 0.5, fillColor: '#ddddff', weight: 4};
 	
 	function createMap() {
  
-     L.mapbox.accessToken = 'pk.eyJ1IjoiY29tcHV0ZWNoIiwiYSI6InMyblMya3cifQ.P8yppesHki5qMyxTc2CNLg';
-     map = L.mapbox.map('map', 'fcc.k74ed5ge', {
+		L.mapbox.accessToken = 'pk.eyJ1IjoiY29tcHV0ZWNoIiwiYSI6InMyblMya3cifQ.P8yppesHki5qMyxTc2CNLg';
+		map = L.mapbox.map('map', 'fcc.k74ed5ge', {
              attributionControl: true,
              maxZoom: 19
          })
          .setView([45, -93], 3);
 		 
+		 
+		baseStreet = L.mapbox.tileLayer('fcc.k74ed5ge').addTo(map);
+		baseSatellite = L.mapbox.tileLayer('fcc.k74d7n0g');
+		baseTerrain = L.mapbox.tileLayer('fcc.k74cm3ol');
+		 
+		L.control.scale({
+         position: 'bottomright'
+		}).addTo(map);
+
+		geocoder = L.mapbox.geocoder('mapbox.places-v1');
+
+		layerControl = new L.Control.Layers({
+         'Street': baseStreet.addTo(map),
+         'Satellite': baseSatellite,
+         'Terrain': baseTerrain
+		}, {
+		}, {
+			position: 'topleft'
+		}
+		).addTo(map);
+		 
 	}
 
 	function getAllTVCallsign() {
 	
-	url = host + "/getAllTVCallsign";
+	var url = host + "/id/tv/callsign.json";
 	
 	console.log(url);
 	$.ajax(url, {
@@ -78,14 +105,43 @@
 		
 		console.log(data)
 		
-			callsigns = data.callsign;
+			callsigns = data.list;
 		  callsigns = getUniqArray(callsigns);
 		  var str1 = ""
 		  for (var i = 0; i < callsigns.length; i++) {
 		  str1 += '<span id="' + callsigns[i] + '" class="id-span-tv">' + callsigns[i] + '</span> <br>';
 		  }
 		  $("#display-area-tv").html(str1);
-		  $("#num-tv").html("total:" + callsigns.length);
+		  //$("#num-tv").html("total:" + callsigns.length);
+		  
+		  $(".id-span-tv").on("click", function(e) {
+			clickedOnCallsignTV(e);
+			});
+			}
+	});
+	}
+	
+	function getAllTVFilenumber() {
+	
+	var url = host + "/id/tv/filenumber.json";
+	
+	console.log(url);
+	$.ajax(url, {
+        type: "GET",
+        url: url,
+        dataType: "json",
+        success: function(data){
+		
+		console.log(data)
+		
+			filenumbers = data.list;
+		  filenumbers = getUniqArray(filenumbers);
+		  var str1 = ""
+		  for (var i = 0; i < filenumbers.length; i++) {
+		  str1 += '<span id="' + callsigns[i] + '" class="id-span-tv">' + callsigns[i] + '</span> <br>';
+		  }
+		  $("#display-area-tv").html(str1);
+		  //$("#num-tv").html("total:" + callsigns.length);
 		  
 		  $(".id-span-tv").on("click", function(e) {
 			clickedOnCallsignTV(e);
@@ -97,21 +153,21 @@
 	
 	function getAllFMCallsign() {
 	
-	url = host + "/getAllFMCallsign";
+	var url = host + "/id/fm/callsign.json";
 	console.log(url);
 	$.ajax(url, {
         type: "GET",
         url: url,
         dataType: "json",
         success: function(data){
-			callsigns = data.callsign;
+			callsigns = data.list;
 		  callsigns = getUniqArray(callsigns);
 		  var str1 = ""
 		  for (var i = 0; i < callsigns.length; i++) {
 		  str1 += '<span id="' + callsigns[i] + '" class="id-span-fm">' + callsigns[i] + '</span> <br>';
 		  }
 		  $("#display-area-fm").html(str1);
-		  $("#num-fm").html("total:" + callsigns.length);
+		  //$("#num-fm").html("total:" + callsigns.length);
 		  
 		  $(".id-span-fm").on("click", function(e) {
 			clickedOnCallsignFM(e);
@@ -122,21 +178,21 @@
 	
 	function getAllAMCallsign() {
 	
-	url = host + "/getAllAMCallsign";
+	var url = host + "/id/am/callsign.json";
 	console.log(url);
 	$.ajax(url, {
         type: "GET",
         url: url,
         dataType: "json",
         success: function(data){
-			callsigns = data.callsign;
+			callsigns = data.list;
 		  callsigns = getUniqArray(callsigns);
 		  var str1 = ""
 		  for (var i = 0; i < callsigns.length; i++) {
 		  str1 += '<span id="' + callsigns[i] + '" class="id-span-am">' + callsigns[i] + '</span> <br>';
 		  }
 		  $("#display-area-am").html(str1);
-		  $("#num-am").html("total:" + callsigns.length);
+		  //$("#num-am").html("total:" + callsigns.length);
 		  
 		  $(".id-span-am").on("click", function(e) {
 			clickedOnCallsignAM(e);
@@ -172,8 +228,14 @@ return u;
 function clickedOnCallsignTV(e) {
 
 var callsign = e.currentTarget.id;
-url = host + "/getTVContourByCallsign/" + callsign;
+var url = host + "/contour/tv/callsign/" + callsign + ".json";
+
 console.log(url);
+
+serviceTypeNow = "tv";
+idTypeNow = "callsign";
+idNow = callsign;
+
 $.ajax(url, {
         type: "GET",
         url: url,
@@ -222,7 +284,8 @@ map.fitBounds(contour_json.getBounds());
 
 function clickedOnCallsignFM(e) {
 var callsign = e.currentTarget.id;
-url = host + "/getFMContourByCallsign/" + callsign;
+var url = host + "/contour/fm/callsign/" + callsign + ".json";
+
 console.log(url);
 $.ajax(url, {
         type: "GET",
@@ -265,8 +328,7 @@ map.fitBounds(contour_json.getBounds());
 
 function clickedOnCallsignAM(e) {
 var callsign = e.currentTarget.id;
-url = host + "/getAMContourByCallsign/" + callsign + "/B/daytime";
-
+var url = host + "/contour/am/callsign/" + callsign + ".json/B/day";
 console.log(url);
 $.ajax(url, {
         type: "GET",
@@ -312,7 +374,22 @@ map.fitBounds(contour_json.getBounds());
 
 function setupListener() {
 
+$(".download-data").on("click", function(e) {
+e.preventDefault();
+var id = e.target.id;
+if (id == "download-data-json") {
 
+
+}
+
+
+//var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=contour:am_contours&maxFeatures=50&outputFormat=application%2Fjson
+
+
+
+alert(id);
+
+});
 
 }
 	
@@ -370,7 +447,7 @@ $(document).ready(function() {
                                     </a>
                                 </li>
 								<li class="dropdown dropdown-left yamm-fw" role="presentation">
-                                    <a href="/contour_overview.html" class="dropdown-toggle">
+                                    <a href="/contour_demo.html" class="dropdown-toggle">
                                         <span class="link-title dropdown-link-title">Demo</span>
                                     </a>
                                 </li>
@@ -384,15 +461,37 @@ $(document).ready(function() {
         <div class="clearfix"></div>
 
 		<center>
-		<b>
-Contour API Demo
-</b>
+
 <p>
 <span id="contour-info"></span>
-<table ><tr>
+<table >
+<tr>
+<td><h2>
+Contour API Demo
+</h2></td>
+</tr>
+
+<tr>
 <td>
 <br>
-<div id="map" style="width: 700px; height: 700px; vertical-align: top"></div>
+<div id="map" style="width: 700px; height: 700px; vertical-align: top">
+
+<div style="position: absolute; left: 100px; top: 10px;  z-index: 99999">
+
+						<div id="download-data-div" class="pull-right">
+							Download Contour: 
+							<span class="download-data" id="download-data-json" href="" target="_blank">JSON</span>
+							|  
+							<span class="download-data" id="download-data-xml" href="" target="_blank">XML</span>
+							| 
+							<span class="download-data" id="download-data-shp" href="" target="_blank">SHP</span>
+							| 
+							<span class="download-data" id="download-data-kml" href="" target="_blank">KML</span>							
+							|
+							<span class="download-data" id="download-data-csv" href="" target="_blank">CSV</span>
+						</div>	
+</div>
+</div>
 </td>
 <td width=10></td>
 <td height=700 width=120 valign=top>
@@ -401,6 +500,7 @@ TV Callsigns:<br>
 <div id="display-area-tv" style="height: 100%;overflow: auto; ">
 
 </div>
+
 </td>
 
 <td height=700 width=120>
@@ -423,6 +523,8 @@ AM Callsigns:<br>
 </table>
 
 </center>
+
+
         
 
     <script src='js/vendor/swagger/lib/jquery.slideto.min.js' type='text/javascript'></script>
