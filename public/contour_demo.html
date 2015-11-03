@@ -107,6 +107,7 @@
 		
 			callsigns = data.list;
 		  callsigns = getUniqArray(callsigns);
+		  callsigns.push("KRBK");
 		  var str1 = ""
 		  for (var i = 0; i < callsigns.length; i++) {
 		  str1 += '<span id="' + callsigns[i] + '" class="id-span-tv">' + callsigns[i] + '</span> <br>';
