@@ -45,7 +45,8 @@
 							"callsign",
 							"fileNumber",
 							"applicationId",
-							"antennaId"
+							"antennaId",
+							"facilityId"
 						]
 					},
 					{

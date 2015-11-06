@@ -74,6 +74,9 @@ var filter = "callsign='" + id_upper + "'";
 else if (idType_lower == 'antennaid') {
 var filter = "antid=" + id_upper;
 }
+else if (idType_lower == 'facilityid') {
+var filter = "facility_id=" + id_upper;
+}
 
 if (serviceType_upper == 'AM') {
 filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePeriod_lower + "'";
