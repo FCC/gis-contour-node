@@ -25,14 +25,17 @@
 	//TV example
 	var serviceType = "TV";
 	var callsign = "DK02CG";
+	var facility_id = 121;
 	
 	//FM example
 	var serviceType = "FM";
 	var callsign = "870831MK";
+	var facility_id = 5343;
 	
 	//AM example
 	var serviceType = "AM";
 	var callsign = "DWEDC";
+	var facility_id = 22044;
 	
 	
 	contour_style = {color: "#000", opacity: 1.0,  fillOpacity: 0.0, weight: 4};
@@ -67,16 +70,13 @@
 	 ).addTo(map);
 
 	if (serviceType == "AM") { 
-		//var url = host + "/getAMContourByCallsign/" + callsign + "/B/daytime";
-		var url = host + "/contour/am/callsign/" + callsign + ".json/B/day";
+		var url = host + "/contour/am/facilityid/" + facility_id + ".json/B/day";
 	}
 	if (serviceType == "TV") { 
-		//var url = host + "/getAMContourByCallsign/" + callsign + "/B/daytime";
-		var url = host + "/contour/tv/callsign/" + callsign + ".json";
+		var url = host + "/contour/tv/facilityid/" + facility_id + ".json";
 	}
 	if (serviceType == "FM") { 
-		//var url = host + "/getAMContourByCallsign/" + callsign + "/B/daytime";
-		var url = host + "/contour/fm/callsign/" + callsign + ".json";
+		var url = host + "/contour/fm/facilityid/" + facility_id + ".json";
 	}
 
 	 
@@ -87,6 +87,7 @@
         success: function(data){
 		
 		if (data.features.length == 0) {
+			$('#contour_msg').css({"visibility": "visible"});
 			return;
 		}
 		
@@ -132,7 +133,12 @@ $(document).ready(function() {
 </head>
 
 <body>
-<div id="map" style="width: 700px; height: 700px; vertical-align: top"></div>
+<div>
+<div id="map" style="width: 700px; height: 700px; vertical-align: top">
+</div>
+<div id="contour_msg" style="position: absolute; top: 10px; left:100px; font-size: 20px; z-index: 999; visibility: hidden">Currently no contours are available for this facility.</div>
+</div>
+
 </body>
 
 </html>
