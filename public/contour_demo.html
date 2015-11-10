@@ -231,6 +231,10 @@ function clickedOnCallsignTV(e) {
 var callsign = e.currentTarget.id;
 var url = host + "/contour/tv/callsign/" + callsign + ".json";
 
+serviceTypeNow = "tv";
+idTypeNow = "callsign";
+idNow = callsign;
+
 console.log(url);
 
 serviceTypeNow = "tv";
@@ -252,11 +256,12 @@ $.ajax(url, {
 		var application_id = p.application_id;
 		var service = p.service;
 		var callsign = p.callsign;
+		var facility_id = p.facility_id;
 		var filenumber = p.filenumber;
 		var station_lat = p.station_lat;
 		var station_lon = p.station_lon;
 		
-		var text = "Type: " + type + " | Application ID: " + application_id + " | Service: " + service + " | Call Sign: " + callsign + " | File Number: " + filenumber + "<br>Station Lat: " + station_lat + " | Station Lon: " + station_lon; 
+		var text = "Type: " + type + " | Facility ID: " + facility_id + " | Application ID: " + application_id + " | Service: " + service + " | Call Sign: " + callsign + " | File Number: " + filenumber + "<br>Station Lat: " + station_lat + " | Station Lon: " + station_lon; 
 		$("#contour-info").html(text);
 		
 		
@@ -286,6 +291,9 @@ map.fitBounds(contour_json.getBounds());
 function clickedOnCallsignFM(e) {
 var callsign = e.currentTarget.id;
 var url = host + "/contour/fm/callsign/" + callsign + ".json";
+serviceTypeNow = "fm";
+idTypeNow = "callsign";
+idNow = callsign;
 
 console.log(url);
 $.ajax(url, {
@@ -303,11 +311,12 @@ $.ajax(url, {
 		var application_id = p.application_id;
 		var service = p.service;
 		var callsign = p.callsign;
+		var facility_id = p.facility_id;
 		var filenumber = p.filenumber;
 		var station_lat = p.station_lat;
 		var station_lon = p.station_lon;
 		
-		var text = "Type: " + type + " | Application ID: " + application_id + " | Service: " + service + " | Call Sign: " + callsign + " | File Number: " + filenumber + "<br>Station Lat: " + station_lat + " | Station Lon: " + station_lon; 
+		var text = "Type: " + type + " | Facility ID: " + facility_id + " | Application ID: " + application_id + " | Service: " + service + " | Call Sign: " + callsign + " | File Number: " + filenumber + "<br>Station Lat: " + station_lat + " | Station Lon: " + station_lon; 
 		$("#contour-info").html(text);
 		
 		if (map.hasLayer(contour_json)) {
@@ -330,6 +339,10 @@ map.fitBounds(contour_json.getBounds());
 function clickedOnCallsignAM(e) {
 var callsign = e.currentTarget.id;
 var url = host + "/contour/am/callsign/" + callsign + ".json/B/day";
+serviceTypeNow = "am";
+idTypeNow = "callsign";
+idNow = callsign;
+
 console.log(url);
 $.ajax(url, {
         type: "GET",
@@ -346,13 +359,14 @@ $.ajax(url, {
 		var antid = p.antid;
 		var time_period = p.time_period;
 		var callsign = p.callsign;
+		var facility_id = p.facility_id;
 		var frequency = p.frequency;
 		var frequency_unit = p.frequency_unit;
 		var station_lat = p.station_lat;
 		var station_lon = p.station_lon;
 		var contour_level = p.contour_level
 		
-		var text = "Type: " + type + " | Antenna ID: " + antid + " | Time Period: " + time_period + " | Call Sign: " + callsign + " | Frequency: " + frequency + " " + frequency_unit + " | Level: " + contour_level  + "<br>Station Lat: " + station_lat + " | Station Lon: " + station_lon; 
+		var text = "Type: " + type + " | Facility ID: " + facility_id + " | Antenna ID: " + antid + " | Time Period: " + time_period + " | Call Sign: " + callsign + " | Frequency: " + frequency + " " + frequency_unit + " | Level: " + contour_level  + "<br>Station Lat: " + station_lat + " | Station Lon: " + station_lon; 
 		$("#contour-info").html(text);
 		
 		if (map.hasLayer(contour_json)) {
@@ -378,17 +392,34 @@ function setupListener() {
 $(".download-data").on("click", function(e) {
 e.preventDefault();
 var id = e.target.id;
-if (id == "download-data-json") {
 
-
+var typeName = "contour:" + serviceTypeNow + "_contours";
+var filter = idTypeNow + "='" + idNow + "'";
+if (serviceTypeNow == 'am') {
+filter = idTypeNow + "='" + idNow + "' AND contour_level=2";
 }
 
+if (id == "download-data-json") {
+var outputFormat = "application/json"
+}
+if (id == "download-data-shp") {
+var outputFormat = "shape-zip"
+}
+if (id == "download-data-csv") {
+var outputFormat = "csv"
+}
+if (id == "download-data-gml") {
+var outputFormat = "GML2"
+}
 
-//var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=contour:am_contours&maxFeatures=50&outputFormat=application%2Fjson
+var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=50&outputFormat=" + outputFormat + "&cql_filter=" + filter;
 
+if (serviceTypeNow == "am") {
+url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=50&outputFormat=" + outputFormat + "&cql_filter=" + filter;
+}
 
+window.open(url);
 
-alert(id);
 
 });
 
@@ -477,24 +508,22 @@ Contour API Demo
 <br>
 <div id="map" style="width: 700px; height: 700px; vertical-align: top">
 
-<!--
+
 <div style="position: absolute; left: 100px; top: 10px;  z-index: 99999">
 
 						<div id="download-data-div" class="pull-right">
 							Download Contour: 
 							<span class="download-data" id="download-data-json" href="" target="_blank">JSON</span>
-							|  
-							<span class="download-data" id="download-data-xml" href="" target="_blank">XML</span>
 							| 
-							<span class="download-data" id="download-data-shp" href="" target="_blank">SHP</span>
-							| 
-							<span class="download-data" id="download-data-kml" href="" target="_blank">KML</span>							
+							<span class="download-data" id="download-data-shp" href="" target="_blank">SHP</span>							
 							|
 							<span class="download-data" id="download-data-csv" href="" target="_blank">CSV</span>
+							|  
+							<span class="download-data" id="download-data-gml" href="" target="_blank">GML</span>
 						</div>	
 </div>
 
--->
+
 
 </div>
 </td>
