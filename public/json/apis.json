@@ -1,0 +1,172 @@
+{
+    "swagger":"2.0",
+    "info": {
+        "version": "0.0.1",
+        "title": "FCC Contour API"
+    },
+    "host": "contour-node-dev-1.elasticbeanstalk.com",
+    "schemes":["http"],
+    "basePath": "/",
+    "tags":[
+        {
+            "name": "contour",
+            "description": ""
+        }
+    ],
+    "paths":{
+
+		"/contour/{serviceType}/{idType}/{id}.{format}/{stationClass}/{timePeriod}": {
+            "get":{
+                "tags": [""],
+                "summary": "Get Contour by Service Type",
+                "description": "Get ontour based on serviceType (AM, FM, TV), idType (callsign, applicationId, fileNumber, antennaId). Response returned in GeoJSON or GML.",
+                "parameters": [
+                    {
+						"name":"serviceType",
+						"in":"path",
+						"description":"serviceType.<br /><br />Valid values: tv, fm, am",
+						"required":true,
+						"type":"string",
+						"defaultValue": "tv",
+						"enum": [
+							"tv",
+							"fm",
+							"am"
+						]
+					},
+					{
+						"name":"idType",
+						"in":"path",
+						"description":"idType.<br /><br />Valid values: callsign, fileNumber (TV and FM only), applicationId (TV and FM only), antennaId (AM only).",
+						"required":true,
+						"type":"string",
+						"defaultValue": "callsign",
+						"enum": [
+							"callsign",
+							"fileNumber",
+							"applicationId",
+							"antennaId",
+							"facilityId"
+						]
+					},
+					{
+						"name":"id",
+						"in":"path",
+						"description":"id, <br /><br />. Values of callsign, filenumber, applicationId, or antennaId.",
+						"required":true,
+						"type":"string",
+						"defaultValue": "W04AE"
+					},
+					{
+						"name":"format",
+						"in":"path",
+						"description":"Format for the returned results.<br /><br />Valid values: json, jsonp, xml",
+						"required":false,
+						"type":"string",
+						"defaultValue": "json",
+						"enum": [
+							"json",
+							"gml"
+						]
+					},
+					{
+						"name":"stationClass",
+						"in":"query",
+						"description":"class of the station (can be A, B, C, or D). <br /><br />AM only.",
+						"required":false,
+						"type":"string",
+						"defaultValue": "B",
+						"enum": [
+							"A",
+							"B",
+							"C",
+							"D"
+						]
+					},
+					{
+						"name":"timePeriod",
+						"in":"query",
+						"description":"timePeriod. <br /><br />AM only. (Values can be day for now)",
+						"required":false,
+						"type":"string",
+						"defaultValue": "day",
+						"enum": [
+							"day"
+						]
+					}
+				],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        },
+		
+		"/id/{serviceType}/{idType}.{format}": {
+            "get":{
+                "tags": [""],
+                "summary": "Get all IDs for a service.",
+                "description": "Get all IDs based on service type (e.g., get all call signs for TV).  Return all IDs in an array. Limited to 100 items for demo purpose.",
+                "parameters": [
+                    {
+						"name":"serviceType",
+						"in":"path",
+						"description":"serviceType.<br /><br />Valid values: TV, FM, AM",
+						"required":true,
+						"type":"string",
+						"defaultValue": "TV",
+						"enum": [
+							"TV",
+							"FM",
+							"AM"
+						]
+					},
+					{
+						"name":"idType",
+						"in":"path",
+						"description":"idType.<br /><br />Valid values: callsign, fileNumber (TV and FM only), applicationId (TV and FM only), antenna ID (AM only)",
+						"required":true,
+						"type":"string",
+						"defaultValue": "fileNumber",
+						"enum": [
+							"callsign",
+							"applicationId",
+							"filenumber",
+							"antennaId"
+						]
+					},
+					{
+						"name":"format",
+						"in":"path",
+						"description":"Format for the returned results.<br /><br />Valid values: json",
+						"required":false,
+						"type":"string",
+						"defaultValue": "json",
+						"enum": [
+							"json"
+						]
+					}				
+				],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }            
+        }
+		
+		
+		
+		
+        
+    }
+}
