@@ -8,6 +8,7 @@ var geo_space = configEnv[NODE_ENV].GEO_SPACE;
 
 console.log('contour ' + host);
 
+
 var http = require("http");
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
