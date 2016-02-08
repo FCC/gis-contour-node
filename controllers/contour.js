@@ -222,6 +222,7 @@ var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=
 
 console.log(url);
 
+
    http.get(url, function(res1) {
        var data = "";
 			res1.setEncoding('binary');
