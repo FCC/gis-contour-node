@@ -28,8 +28,11 @@
     "cors": "^2.7.1",
     "express": "^4.13.1",
     "file-stream-rotator": "0.0.6",
+    "html-entities": "^1.2.0",
+    "htmlencode": "0.0.4",
     "js2xmlparser": "^0.1.9",
     "moment": "^2.10.3",
-    "morgan": "^1.6.1"
+    "morgan": "^1.6.1",
+    "xml": "^1.0.1"
   }
 }

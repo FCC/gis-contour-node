@@ -2,6 +2,13 @@
 var geo_host = "http://contour-geoserver.elasticbeanstalk.com/";
 var geo_space = "contour";
 
+var host = "localhost:6479";
+
+var http = require("http");
+var Entities = require('html-entities').AllHtmlEntities;
+var entities = new Entities();
+var xml = require('xml');
+var fs = require('fs');
 
 function contour(req, res) {
 var serviceType = req.params.serviceType;
@@ -22,9 +29,22 @@ var outputFormat = 'application/json';
 if (format_lower == 'json') {
 	outputFormat = 'application/json';
 }
-else if (format_lower == 'gml') {
+else if (format_lower == 'gml2') {
 	outputFormat = 'GML2';
 }
+else if (format_lower == 'gml3') {
+	outputFormat = 'GML3';
+}
+else if (format_lower == 'csv') {
+  outputFormat = 'csv';
+}
+else if (format_lower == 'shapefile') {
+  outputFormat = 'shape-zip';
+}
+else if (format_lower == 'kml') {
+  outputFormat = 'kml';
+}
+
 
 var stationClass = 'B'; //default
 var timePeriod = 'daytime'; //default
@@ -83,7 +103,6 @@ filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePer
 }
 
 
-var http = require("http");
 var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
 
 console.log(url);
@@ -102,6 +121,136 @@ console.log(url);
                                            });
 
 }
+
+function download(req, res) {
+var serviceType = req.params.serviceType;
+var serviceType_lower = serviceType.toLowerCase();
+var serviceType_upper = serviceType.toUpperCase();
+var idType = req.params.idType;
+var idType_lower = idType.toLowerCase();
+var idType_upper = idType.toUpperCase();
+var id_format = req.params.id_format;
+var id = id_format.split('.')[0];
+var id_lower = id.toLowerCase();
+var id_upper = id.toUpperCase();
+var format = id_format.split('.')[1];
+var format_lower = format.toLowerCase();
+var format_upper = format.toUpperCase();
+
+var outputFormat = 'application/json';
+if (format_lower == 'json') {
+	outputFormat = 'application/json';
+}
+else if (format_lower == 'gml2') {
+	outputFormat = 'GML2';
+}
+else if (format_lower == 'gml3') {
+	outputFormat = 'GML3';
+}
+else if (format_lower == 'csv') {
+  outputFormat = 'csv';
+}
+else if (format_lower == 'shapefile') {
+  outputFormat = 'shape-zip';
+}
+else if (format_lower == 'kml') {
+  outputFormat = 'kml';
+}
+
+
+var stationClass = 'B'; //default
+var timePeriod = 'daytime'; //default
+
+if (serviceType_upper == 'AM') {
+if (req.params.stationClass) {
+stationClass = req.params.stationClass;
+}
+if (req.params.timePeriod) {
+timePeriod = req.params.timePeriod + 'time';
+}
+
+var stationClass_lower = stationClass.toLowerCase();
+var stationClass_upper = stationClass.toUpperCase();
+var timePeriod_lower = timePeriod.toLowerCase();
+var timePeriod_upper = timePeriod.toUpperCase();
+
+var contour_level = 0;
+if (stationClass_upper == "A") {
+var contour_level = 0.025;
+}
+if (stationClass_upper == "B") {
+var contour_level = 0.5;
+}
+if (stationClass_upper == "C") {
+var contour_level = 0.5;
+}
+if (stationClass_upper == "D") {
+var contour_level = 0.5;
+}
+
+}
+
+var typeName = "contour:" + serviceType_lower + "_contours";
+
+if (idType_lower == 'applicationid') {
+var filter = "application_id=" + id_upper;
+}
+else if (idType_lower == 'filenumber') {
+var filter = "filenumber='" + id_upper + "'";
+}
+else if (idType_lower == 'callsign') {
+var filter = "callsign='" + id_upper + "'";
+}
+else if (idType_lower == 'antennaid') {
+var filter = "antid=" + id_upper;
+}
+else if (idType_lower == 'facilityid') {
+var filter = "facility_id=" + id_upper;
+}
+
+if (serviceType_upper == 'AM') {
+filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePeriod_lower + "'";
+}
+
+
+var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
+
+console.log(url);
+
+   http.get(url, function(res1) {
+       var data = "";
+			res1.setEncoding('binary');
+           res1.on('data', function (chunk) {
+                 data += chunk;
+                     });
+                         res1.on("end", function() {
+								var d = new Date();
+								format1 = format;
+								if (format1 == "shapefile") {
+									format1 = "zip";
+								}
+								
+								var filename = "contour_" + idType_lower + "-" + id + "_format-" + format + "_time-" +  d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + d.getUTCHours() + "-" + d.getUTCMinutes() + "-" + d.getUTCMilliseconds() + "." + format1;
+								var filepath = "public/downloads/" + filename;
+								var link = host + "/downloads/" + filename;
+								console.log(link);
+								fs.writeFile(filepath, data, 'binary', function(err) {
+									if(err) {
+										return console.log(err);
+									}
+									console.log("write download file " + filepath);
+								});
+								var link = "<!DOCTYPE html><html><body><a href=\"" + link + "\" download>" + filename + "</a><br>(right-click on the above link, select Open Link in New Window, then open or save the file. Please use Firefox browser.)</body></html>";
+								res.header("content-type", "text/html");
+                               res.send(link);
+                                   });
+                                     }).on("error", function() {
+										
+                                         //callback(null);
+                                           });
+
+}
+
 
 
 function id(req, res) {
@@ -141,7 +290,7 @@ filter = "&cql_filter=contour_level=" + contour_level + "+AND+time_period='dayti
 
 var typeName = "contour:" + serviceType_lower + "_contours";
 
-var http = require("http");
+
 
 var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=" + outputFormat + "&propertyName=" + propertyName + "&sortBy=" + propertyName + filter;
  
@@ -165,14 +314,6 @@ var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeat
                                          //callback(null);
                                            });
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -626,6 +767,7 @@ var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeat
 
 
 module.exports.contour = contour;
+module.exports.download = download;
 module.exports.id = id;
 module.exports.getTVContourByFilenumber = getTVContourByFilenumber;
 module.exports.getTVContourByApplicationId = getTVContourByApplicationId;

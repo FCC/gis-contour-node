@@ -4,7 +4,7 @@
         "version": "0.0.1",
         "title": "FCC Contour API"
     },
-    "host": "contour-node-dev-1.elasticbeanstalk.com",
+    "host": "gis-contour-node-dev.us-west-2.elasticbeanstalk.com",
     "schemes":["http"],
     "basePath": "/",
     "tags":[
