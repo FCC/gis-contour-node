@@ -2,8 +2,6 @@
 var geo_host = "http://contour-geoserver.elasticbeanstalk.com/";
 var geo_space = "contour";
 
-var host = "localhost:6479";
-
 var http = require("http");
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
@@ -232,7 +230,7 @@ console.log(url);
 								
 								var filename = "contour_" + idType_lower + "-" + id + "_format-" + format + "_time-" +  d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + d.getUTCHours() + "-" + d.getUTCMinutes() + "-" + d.getUTCMilliseconds() + "." + format1;
 								var filepath = "public/downloads/" + filename;
-								var link = host + "/downloads/" + filename;
+								var link = "downloads/" + filename;
 								console.log(link);
 								fs.writeFile(filepath, data, 'binary', function(err) {
 									if(err) {
