@@ -1,12 +1,19 @@
 
-var geo_host = "http://contour-geoserver.elasticbeanstalk.com/";
-var geo_space = "contour";
+var configEnv = require('../config/env.json');
+var NODE_ENV = process.env.NODE_ENV;
+var NODE_PORT =  process.env.PORT || configEnv[NODE_ENV].NODE_PORT;
+var host =  process.env.PORT || configEnv[NODE_ENV].HOST;
+var geo_host =  configEnv[NODE_ENV].GEO_HOST;
+var geo_space = configEnv[NODE_ENV].GEO_SPACE;
+
+console.log('contour ' + host);
 
 var http = require("http");
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
 var xml = require('xml');
 var fs = require('fs');
+
 
 function contour(req, res) {
 var serviceType = req.params.serviceType;
@@ -101,7 +108,7 @@ filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePer
 }
 
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
 
 console.log(url);
 
@@ -211,7 +218,7 @@ filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePer
 }
 
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
+var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
 
 console.log(url);
 
@@ -230,7 +237,7 @@ console.log(url);
 								
 								var filename = "contour_" + idType_lower + "-" + id + "_format-" + format + "_time-" +  d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + d.getUTCHours() + "-" + d.getUTCMinutes() + "-" + d.getUTCMilliseconds() + "." + format1;
 								var filepath = "public/downloads/" + filename;
-								var link = "downloads/" + filename;
+								var link = host + "/downloads/" + filename;
 								console.log(link);
 								fs.writeFile(filepath, data, 'binary', function(err) {
 									if(err) {
@@ -290,7 +297,7 @@ var typeName = "contour:" + serviceType_lower + "_contours";
 
 
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=" + outputFormat + "&propertyName=" + propertyName + "&sortBy=" + propertyName + filter;
+var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=" + outputFormat + "&propertyName=" + propertyName + "&sortBy=" + propertyName + filter;
  
  console.log(url);
  
@@ -324,7 +331,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=filenumber='" + filenumber_upper + "'"; 
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=filenumber='" + filenumber_upper + "'"; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -348,7 +355,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=application_id=" + application_id_upper; 
+var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=application_id=" + application_id_upper; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -372,7 +379,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=callsign='" + callsign_upper + "'"; 
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=callsign='" + callsign_upper + "'"; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -397,7 +404,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=filenumber='" + filenumber_upper + "'"; 
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=filenumber='" + filenumber_upper + "'"; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -421,7 +428,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=application_id=" + application_id_upper; 
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=application_id=" + application_id_upper; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -445,7 +452,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=callsign='" + callsign_upper + "'"; 
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=callsign='" + callsign_upper + "'"; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -491,7 +498,7 @@ var typeName = "contour:am_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=antid=" + antid_upper + "+AND+contour_level=" + contour_level + "+AND+time_period='" + time_period_lower + "'"; 
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=antid=" + antid_upper + "+AND+contour_level=" + contour_level + "+AND+time_period='" + time_period_lower + "'"; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -536,7 +543,7 @@ var typeName = "contour:am_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=callsign='" + callsign_upper + "'+AND+contour_level=" + contour_level + "+AND+time_period='" + time_period_lower + "'"; 
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=application/json&cql_filter=callsign='" + callsign_upper + "'+AND+contour_level=" + contour_level + "+AND+time_period='" + time_period_lower + "'"; 
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -558,7 +565,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=filenumber&sortBy=filenumber";
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=100&outputFormat=application/json&propertyName=filenumber&sortBy=filenumber";
 
 
    http.get(url, function(res1) {
@@ -586,7 +593,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -612,7 +619,7 @@ var typeName = "contour:tv_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -639,7 +646,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=filenumber&sortBy=filenumber";
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=filenumber&sortBy=filenumber";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -665,7 +672,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -691,7 +698,7 @@ var typeName = "contour:fm_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=application_id&sortBy=application_id";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -717,7 +724,7 @@ var typeName = "contour:am_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=antid&sortBy=antid&cql_filter=contour_level=0.25";
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=antid&sortBy=antid&cql_filter=contour_level=0.25";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
@@ -743,7 +750,7 @@ var typeName = "contour:am_contours";
 
 var http = require("http");
 
-var url = geo_host + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign&cql_filter=contour_level=0.25";
+var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=20&outputFormat=application/json&propertyName=callsign&sortBy=callsign&cql_filter=contour_level=0.25";
    http.get(url, function(res1) {
        var data = "";
            res1.on('data', function (chunk) {
