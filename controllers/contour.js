@@ -2,7 +2,7 @@
 var configEnv = require('../config/env.json');
 var NODE_ENV = process.env.NODE_ENV;
 var NODE_PORT =  process.env.PORT || configEnv[NODE_ENV].NODE_PORT;
-var host =  process.env.PORT || configEnv[NODE_ENV].HOST;
+var host =  configEnv[NODE_ENV].HOST;
 var geo_host =  configEnv[NODE_ENV].GEO_HOST;
 var geo_space = configEnv[NODE_ENV].GEO_SPACE;
 
