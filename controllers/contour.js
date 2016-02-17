@@ -232,12 +232,19 @@ console.log(url);
                      });
                          res1.on("end", function() {
 								var d = new Date();
-								format1 = format;
+								format1 = format_lower;
 								if (format1 == "shapefile") {
 									format1 = "zip";
 								}
+								if (format1 == "json") {
+										var content_type = "application/json";
+								}
+								else {
+									var content_type = "text/" + format1;
+								}
 								
 								var filename = "contour_" + idType_lower + "-" + id + "_format-" + format + "_time-" +  d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + d.getUTCHours() + "-" + d.getUTCMinutes() + "-" + d.getUTCMilliseconds() + "." + format1;
+								var filename_attach = "contour_" + idType_lower + "-" + id + "." + format1;
 								var filepath = "public/downloads/" + filename;
 								var link = host + "/downloads/" + filename;
 								console.log(link);
@@ -247,9 +254,22 @@ console.log(url);
 									}
 									console.log("write download file " + filepath);
 								});
-								var link = "<!DOCTYPE html><html><body><a href=\"" + link + "\" download>" + filename + "</a><br>(right-click on the above link, select Open Link in New Window, then open or save the file. Please use Firefox browser.)</body></html>";
-								res.header("content-type", "text/html");
-                               res.send(link);
+								var link = "<!DOCTYPE html><html><body><a href=\"" + link + "\" download>" + filename + "</a><br>(clcik to download)</body></html>";
+								
+								if (format1 == "zip") {
+									res.send(link);
+								}
+								else {
+									res.set({
+										"Content-Disposition": 'attachment; filename="'+filename_attach+'"',
+										"Content-Type": "text/xml",
+										"Content-Length": data.length
+									});
+									
+									res.send(data);
+								}
+								
+								
                                    });
                                      }).on("error", function() {
 										
