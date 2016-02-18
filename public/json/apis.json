@@ -37,42 +37,43 @@
 					{
 						"name":"idType",
 						"in":"path",
-						"description":"idType.<br /><br />Valid values: callsign, fileNumber (TV and FM only), applicationId (TV and FM only), antennaId (AM only).",
+						"description":"idType.<br /><br />Valid values: facilityId, callsign, fileNumber (TV and FM only), applicationId (TV and FM only), antenna ID (AM only)",
 						"required":true,
 						"type":"string",
-						"defaultValue": "callsign",
+						"defaultValue": "facilityId",
 						"enum": [
+							"facilityId",
 							"callsign",
-							"fileNumber",
+							"filenumber",
 							"applicationId",
-							"antennaId",
-							"facilityId"
+							"antennaId"
 						]
 					},
 					{
 						"name":"id",
 						"in":"path",
-						"description":"id, <br /><br />. Values of callsign, filenumber, applicationId, or antennaId.",
+						"description":"id, <br /><br />. Values of facilityId, callsign, filenumber, applicationId, or antennaId.",
 						"required":true,
 						"type":"string",
-						"defaultValue": "W04AE"
+						"defaultValue": "74421"
 					},
 					{
 						"name":"format",
 						"in":"path",
-						"description":"Format for the returned results.<br /><br />Valid values: json, jsonp, xml",
+						"description":"Format for the returned results.<br /><br />Valid values: json, kml, gml",
 						"required":false,
 						"type":"string",
 						"defaultValue": "json",
 						"enum": [
 							"json",
+							"kml",
 							"gml"
 						]
 					},
 					{
 						"name":"stationClass",
 						"in":"query",
-						"description":"class of the station (can be A, B, C, or D). <br /><br />AM only.",
+						"description":"class of the station (can be A, B, C, or D). <br /><br />AM only. Value will ignored for TV and FM.",
 						"required":false,
 						"type":"string",
 						"defaultValue": "B",
@@ -86,7 +87,7 @@
 					{
 						"name":"timePeriod",
 						"in":"query",
-						"description":"timePeriod. <br /><br />AM only. (Values can be day for now)",
+						"description":"timePeriod. <br /><br />AM only (Values can be day for now). Value will be ignored for TV and FM",
 						"required":false,
 						"type":"string",
 						"defaultValue": "day",
@@ -129,11 +130,12 @@
 					{
 						"name":"idType",
 						"in":"path",
-						"description":"idType.<br /><br />Valid values: callsign, fileNumber (TV and FM only), applicationId (TV and FM only), antenna ID (AM only)",
+						"description":"idType.<br /><br />Valid values: facilityId, callsign, file number (TV and FM only), applicationId (TV and FM only), antenna ID (AM only)",
 						"required":true,
 						"type":"string",
 						"defaultValue": "fileNumber",
 						"enum": [
+							"facilityId",
 							"callsign",
 							"applicationId",
 							"filenumber",
@@ -162,9 +164,79 @@
                     "application/json"
                 ]
             }            
+        },
+		
+		"/download/{serviceType}/{idType}/{id}.{format}": {
+            "get":{
+                "tags": [""],
+                "summary": "Download contour by service type, ID type, ID, and format.",
+                "description": "Download a contour by service type (TV, FM, or AM), ID type (facilityId, callsign, file number, application ID).",
+                "parameters": [
+                    {
+						"name":"serviceType",
+						"in":"path",
+						"description":"serviceType.<br /><br />Valid values: TV, FM, AM",
+						"required":true,
+						"type":"string",
+						"defaultValue": "TV",
+						"enum": [
+							"TV",
+							"FM",
+							"AM"
+						]
+					},
+					{
+						"name":"idType",
+						"in":"path",
+						"description":"idType.<br /><br />Valid values: facilityId, callsign, fileNumber (TV and FM only), applicationId (TV and FM only), antenna ID (AM only)",
+						"required":true,
+						"type":"string",
+						"defaultValue": "facilityId",
+						"enum": [
+							"facilityId",
+							"callsign",
+							"filenumber",
+							"applicationId",
+							"antennaId"
+						]
+					},
+					{
+						"name":"id",
+						"in":"path",
+						"description":"id, <br /><br />. Values of facilityId, callsign, filenumber, applicationId, or antennaId.",
+						"required":true,
+						"type":"string",
+						"defaultValue": "74421"
+					},
+					{
+						"name":"format",
+						"in":"path",
+						"description":"Format for the returned results.<br /><br />Valid values: json, kml, gml, csv, shapefile",
+						"required":false,
+						"type":"string",
+						"defaultValue": "json",
+						"enum": [
+							"json",
+							"kml",
+							"gml",
+							"csv",
+							"shapefile"
+						]
+					}				
+				],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+
+                    }
+                },
+                "produces": [
+                    "application/json",
+					"text/xml",
+					"application/x-zip"
+                ]
+            }            
         }
-		
-		
 		
 		
         

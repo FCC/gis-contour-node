@@ -309,6 +309,9 @@ var propertyName = 'callsign';
 else if (idType_lower == 'antennaid') {
 var propertyName = 'antid';
 }
+else if (idType_lower == 'facilityid') {
+var propertyName = 'facility_id';
+}
 
 var filter = '';
 if (serviceType_upper == 'AM') {
