@@ -156,7 +156,7 @@ else if (format_lower == 'gml3') {
 else if (format_lower == 'csv') {
   outputFormat = 'csv';
 }
-else if (format_lower == 'shapefile') {
+else if (format_lower == 'zip') {
   outputFormat = 'shape-zip';
 }
 else if (format_lower == 'kml') {
@@ -228,9 +228,6 @@ request({url: url, encoding: null}, function (err, response, body) {
 
     if (!err && response.statusCode == 200) {
 		var format1 = format_lower;
-		if (format1 == "shapefile") {
-			format1 = "zip";
-		}
 		if (format1 == "zip") {
 			var content_type = "application/x-zip";
 		}
