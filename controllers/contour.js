@@ -12,8 +12,8 @@ console.log('contour ' + host);
 var http = require("http");
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
-var xml = require('xml');
 var fs = require('fs');
+var request = require('request');
 
 
 function contour(req, res) {
@@ -180,7 +180,8 @@ var stationClass_upper = stationClass.toUpperCase();
 var timePeriod_lower = timePeriod.toLowerCase();
 var timePeriod_upper = timePeriod.toUpperCase();
 
-var contour_level = 0;
+
+var contour_level = 0.5; // default
 if (stationClass_upper == "A") {
 var contour_level = 0.025;
 }
@@ -221,60 +222,52 @@ filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePer
 
 var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
 
-console.log(url);
+console.log("request GeoServer: " + url);
+
+request({url: url, encoding: null}, function (err, response, body) {
+
+    if (!err && response.statusCode == 200) {
+		var format1 = format_lower;
+		if (format1 == "shapefile") {
+			format1 = "zip";
+		}
+		if (format1 == "zip") {
+			var content_type = "application/x-zip";
+		}
+		else if (format1 == "json") {
+				var content_type = "application/json";
+		}
+		else {
+			var content_type = "text/" + format1;
+		}
+		
+		var filename_attach = "contour_" + idType_lower + "-" + id + "." + format1;
+
+		if (format1 == "zip") {	
+			res.set({
+				"Content-Disposition": 'attachment; filename="'+filename_attach+'"',
+				"Content-Type": content_type,
+				"Content-Length": body.length
+			});
+	
+			res.send(body);
+		}
+		else {
+			res.set({
+				"Content-Disposition": 'attachment; filename="'+filename_attach+'"',
+				"Content-Type": content_type,
+				"Content-Length": body.length
+			});
+			
+			res.send(body);
+		}
+    }
+	else {
+	console.log(err);
+	}
+});
 
 
-   http.get(url, function(res1) {
-       var data = "";
-			res1.setEncoding('binary');
-           res1.on('data', function (chunk) {
-                 data += chunk;
-                     });
-                         res1.on("end", function() {
-								var d = new Date();
-								format1 = format_lower;
-								if (format1 == "shapefile") {
-									format1 = "zip";
-								}
-								if (format1 == "json") {
-										var content_type = "application/json";
-								}
-								else {
-									var content_type = "text/" + format1;
-								}
-								
-								var filename = "contour_" + idType_lower + "-" + id + "_format-" + format + "_time-" +  d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + d.getUTCHours() + "-" + d.getUTCMinutes() + "-" + d.getUTCMilliseconds() + "." + format1;
-								var filename_attach = "contour_" + idType_lower + "-" + id + "." + format1;
-								var filepath = "public/downloads/" + filename;
-								var link = host + "/downloads/" + filename;
-								console.log(link);
-								fs.writeFile(filepath, data, 'binary', function(err) {
-									if(err) {
-										return console.log(err);
-									}
-									console.log("write download file " + filepath);
-								});
-								var link = "<!DOCTYPE html><html><body><a href=\"" + link + "\" download>" + filename + "</a><br>(clcik to download)</body></html>";
-								
-								if (format1 == "zip") {
-									res.send(link);
-								}
-								else {
-									res.set({
-										"Content-Disposition": 'attachment; filename="'+filename_attach+'"',
-										"Content-Type": "text/xml",
-										"Content-Length": data.length
-									});
-									
-									res.send(data);
-								}
-								
-								
-                                   });
-                                     }).on("error", function() {
-										
-                                         //callback(null);
-                                           });
 
 }
 
@@ -341,7 +334,7 @@ var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=
                                    });
                                      }).on("error", function() {
 										
-                                         //callback(null);
+                                         console.log("error");
                                            });
 }
 
