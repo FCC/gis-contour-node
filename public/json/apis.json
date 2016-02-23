@@ -211,14 +211,15 @@
 					{
 						"name":"format",
 						"in":"path",
-						"description":"Format for the returned results.<br /><br />Valid values: json, kml, gml, csv, zip (shapefile)",
+						"description":"Format for the returned results.<br /><br />Valid values: json, kml, gml2, gml3, csv, zip",
 						"required":false,
 						"type":"string",
 						"defaultValue": "json",
 						"enum": [
 							"json",
 							"kml",
-							"gml",
+							"gml2",
+							"gml3",
 							"csv",
 							"zip"
 						]
