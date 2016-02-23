@@ -143,6 +143,20 @@ var format = id_format.split('.')[1];
 var format_lower = format.toLowerCase();
 var format_upper = format.toUpperCase();
 
+var formatList = ["json", "gml2", "gml3", "csv", "kml", "zip"];
+var formatOK = false;
+for (var i = 0; i < formatList.length; i++) {
+	if (format_lower == formatList[i]) {
+		formatOK = true;
+	}	
+}
+
+if (!formatOK) {
+	res.send("Wrong format:<br> formats must be json, gml2, gml3, csv, kml, or zip");
+	return;
+}
+
+
 var outputFormat = 'application/json';
 if (format_lower == 'json') {
 	outputFormat = 'application/json';
@@ -222,7 +236,7 @@ filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePer
 
 var url = geo_host + "/" +  geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
 
-console.log("request GeoServer: " + url);
+console.log("request GeoServer: " + url + "\n");
 
 request({url: url, encoding: null}, function (err, response, body) {
 
@@ -236,6 +250,10 @@ request({url: url, encoding: null}, function (err, response, body) {
 		}
 		else {
 			var content_type = "text/" + format1;
+		}
+		
+		if (format1 == "gml2" || format1 == "gml3") {
+			var format1 = "gml";
 		}
 		
 		var filename_attach = "contour_" + idType_lower + "-" + id + "." + format1;
