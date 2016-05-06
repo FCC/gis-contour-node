@@ -1,4 +1,8 @@
+// **********************************************************
 
+'use strict';
+
+// **********************************************************
 // require 
 
 var http = require("http");
@@ -42,7 +46,6 @@ console.log('package_json.description : '+ package_json.description );
 var app = express();
 
 app.use(cors());
-
 
 
 // **********************************************************
@@ -98,31 +101,42 @@ app.param('ext', function(req, res, next, ext) {
 	}
 });
 
-//create download directory
-var dir = "public/downloads";
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-}
 
+app.get('/:serviceType/:idType/:id.:ext', function(req, res){
+	contour.getContour(req, res);
+});
 
+app.get('/:serviceType/:idType/:id', function(req, res){
+	contour.getContour(req, res);
+});
+
+/*
 app.get('/contour/:serviceType/:idType/:id_format/:stationClass/:timePeriod', function(req, res){
-contour.contour(req, res);
+	contour.contour(req, res);
 });
 
 app.get('/contour/:serviceType/:idType/:id_format', function(req, res){
-contour.contour(req, res);
+	contour.contour(req, res);
+});
+
+app.get('/contour/:serviceType/:idType/:id_format/:stationClass/:timePeriod', function(req, res){
+	contour.contour(req, res);
+});
+
+app.get('/contour/:serviceType/:idType/:id_format', function(req, res){
+	contour.contour(req, res);
 });
 
 app.get('/download/:serviceType/:idType/:id_format/:stationClass/:timePeriod', function(req, res){
-contour.download(req, res);
+	contour.download(req, res);
 });
 
 app.get('/download/:serviceType/:idType/:id_format', function(req, res){
-contour.download(req, res);
+	contour.download(req, res);
 });
 
 app.get('/id/:serviceType/:idType_format', function(req, res){
-contour.id(req, res);
+	contour.id(req, res);
 });
 
 
@@ -193,6 +207,7 @@ contour.getAllAMAntennaId(req, res);
 app.get('/getAllAMCallsign', function(req, res){
 contour.getAllAMCallsign(req, res);
 });
+*/
 
 // **********************************************************
 // error
@@ -222,9 +237,6 @@ app.use(function(err, req, res, next) {
         'type': 'Internal Server Error',
         'err': err.name +': '+ err.message      
     };  
-    
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     
     res.status(500);
     res.send(err_res);

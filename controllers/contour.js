@@ -17,7 +17,7 @@ var geo_space = configEnv[NODE_ENV].GEO_SPACE;
 console.log('contour ' + host);
 
 
-var http = require("http");
+var http = require('http');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
 var fs = require('fs');
@@ -26,128 +26,359 @@ var request = require('request');
 // **********************************************************
 
 
-function contour(req, res) {
-var serviceType = req.params.serviceType;
-var serviceType_lower = serviceType.toLowerCase();
-var serviceType_upper = serviceType.toUpperCase();
-var idType = req.params.idType;
-var idType_lower = idType.toLowerCase();
-var idType_upper = idType.toUpperCase();
-var id_format = req.params.id_format;
-var id = id_format.split('.')[0];
-var id_lower = id.toLowerCase();
-var id_upper = id.toUpperCase();
-var format = id_format.split('.')[1];
-var format_lower = format.toLowerCase();
-var format_upper = format.toUpperCase();
 
-var outputFormat = 'application/json';
-if (format_lower == 'json') {
-	outputFormat = 'application/json';
-}
-else if (format_lower == 'gml2') {
-	outputFormat = 'GML2';
-}
-else if (format_lower == 'gml3') {
-	outputFormat = 'GML3';
-}
-else if (format_lower == 'csv') {
-  outputFormat = 'csv';
-}
-else if (format_lower == 'shapefile') {
-  outputFormat = 'shape-zip';
-}
-else if (format_lower == 'kml') {
-  outputFormat = 'kml';
-}
-
-// **********************************************************
-
-
-var stationClass = 'B'; //default
-var timePeriod = 'daytime'; //default
-
-if (serviceType_upper == 'AM') {
-	if (req.params.stationClass) {
-		stationClass = req.params.stationClass;
+function getContour(req, res) {
+	
+	var serviceType = req.params.serviceType.toLowerCase();
+	var idType = req.params.idType.toLowerCase();
+	var idValue = req.params.id.toLowerCase();
+	var format = req.params.ext;
+	
+	if (!format) {
+		format = 'json';
 	}
-	if (req.params.timePeriod) {
-		timePeriod = req.params.timePeriod + 'time';
-	}
+	else {
+		format.toLowerCase();
+	}	
+	
+	console.log('serviceType ' + serviceType);
+	console.log('idType ' + idType);
+	console.log('idValue ' + idValue);
+	console.log('format ' + format);
 
-	var stationClass_lower = stationClass.toLowerCase();
-	var stationClass_upper = stationClass.toUpperCase();
-	var timePeriod_lower = timePeriod.toLowerCase();
-	var timePeriod_upper = timePeriod.toUpperCase();
+	var outputFormat = 'application/json';
+	
+	if (format == 'json') {
+		outputFormat = 'application/json';
+	}
+	else if (format == 'jsonp') {
+		outputFormat = 'text/javascript';
+	}
+	else if (format == 'gml') {
+		outputFormat = 'GML3';
+	}
+	else if (format == 'csv') {
+		outputFormat = 'csv';
+	}
+	else if (format == 'shp') {
+		outputFormat = 'shape-zip';
+	}
+	else if (format == 'kml') {
+		outputFormat = 'kml';
+	}
+	
+	console.log('outputFormat ' + outputFormat);
 
-	var contour_level = 0;
-	if (stationClass_upper == "A") {
-		var contour_level = 0.025;
-	}
-	if (stationClass_upper == "B") {
-		var contour_level = 0.5;
-	}
-	if (stationClass_upper == "C") {
-		var contour_level = 0.5;
-	}
-	if (stationClass_upper == "D") {
-		var contour_level = 0.5;
+	// **********************************************************
+
+	var stationClass = 'b'; //default
+	var timePeriod = 'daytime'; //default
+	var contour_level = 0.5;
+
+	if (serviceType == 'am') {
+	
+		if (req.params.stationClass) {
+			stationClass = req.params.stationClass.toLowerCase();
+		}
+		if (req.params.timePeriod) {
+			timePeriod = req.params.timePeriod + 'time'.toLowerCase();
+		}		
+		if (stationClass == 'a') {
+			contour_level = 0.025;
+		}
+		// b, c, d = 0.5
+
 	}
 
-}
+	console.log('stationClass ' + stationClass);
+	console.log('timePeriod ' + timePeriod);
+	console.log('contour_level ' + contour_level);
+	
+	
+	// **********************************************************
+	
+	var typeName = 'contour:' + serviceType + '_contours';
+	var filter;
+	
+	if (idType == 'applicationid') {
+		filter = 'application_id=' + idValue;
+	}
+	else if (idType == 'filenumber') {
+		filter = 'filenumber=\'' + idValue + '\'';
+	}
+	else if (idType == 'callsign') {
+		filter = 'callsign=\'' + idValue + '\'';
+	}
+	else if (idType == 'antennaid') {
+		filter = 'antid=' + idValue;
+	}
+	else if (idType == 'facilityid') {
+		filter = 'facility_id=' + idValue;
+	}
 
-var typeName = "contour:" + serviceType_lower + "_contours";
+	if (serviceType == 'am') {
+		filter += '+AND+contour_level=' + contour_level + '+AND+time_period=\'' + timePeriod + '\'';
+	}
+	
+	console.log('filter ' + filter);
 
-// **********************************************************
+	var getUrl = geo_host + '/' + geo_space + '/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=' + typeName + '&maxFeatures=1&outputFormat=' + outputFormat + '&cql_filter=' + filter; 
 
-if (idType_lower == 'applicationid') {
-	var filter = "application_id=" + id_upper;
-}
-else if (idType_lower == 'filenumber') {
-	var filter = "filenumber='" + id_upper + "'";
-}
-else if (idType_lower == 'callsign') {
-	var filter = "callsign='" + id_upper + "'";
-}
-else if (idType_lower == 'antennaid') {
-	var filter = "antid=" + id_upper;
-}
-else if (idType_lower == 'facilityid') {
-	var filter = "facility_id=" + id_upper;
-}
+	console.log('getUrl ' + getUrl);	
+	
+	
+	
+	
+	
 
-if (serviceType_upper == 'AM') {
-	filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePeriod_lower + "'";
-}
-
-
-var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
-
-console.log(url);
-
-	http.get(url, function(res1) {
-		var data = "";
+	// **********************************************************
+	/*
+	http.get(url, function(getRes) {
+	
+		var getdata = '';
 	   
-		res1.on('data', function (chunk) {
-			data += chunk;
+		getRes.on('data', function (chunk) {
+			getdata += chunk;
 		});
-		res1.on("end", function() {
-			res.send(data);
+		
+		getRes.on('end', function() {
+			res.send(getdata);
 		});
-	}).on("error", function() {
-										
-	//callback(null);
+		
+	}).on('error', function(getErr) {
+		
+		console.error('getErr.stack : ' + getErr.stack);
+		console.error('getErr.name : ' + getErr.name);
+		console.error('getErr.message : ' + getErr.message);
+    
+		var err_res = {};       
+		err_res.responseStatus = {
+			'status': 500,
+			'type': 'Internal Server Error',
+			'err': getErr.name +': '+ getErr.message      
+		};  
+			
+		res.status(500);
+		res.send(err_res);		
+		
 	});
+	*/
+	
+	// **********************************************************
+		
+	request({url: getUrl, encoding: null}, function (err, response, body) {
+		
+		if (err) {
+				
+			console.error('err.stack : ' + err.stack);
+			console.error('err.name : ' + err.name);
+			console.error('err.message : ' + err.message);
+		
+			var err_res = {};       
+			err_res.responseStatus = {
+				'status': 500,
+				'type': 'Internal Server Error',
+				'err': err.name +': '+ err.message      
+			};  
+				
+			res.status(500);
+			res.send(err_res);				
+			
+		}
+		else {
+		
+			console.log('response.statusCode : ' + response.statusCode);			
+			console.log('response.headers[content-type] : ' + response.headers['content-type']);
+			console.log('response.headers : ' + JSON.stringify(response.headers) );		
+			
+			var content_type = response.headers['content-type'];
+			
+			if ((!response.statusCode == 200))  {			
+			
+				console.error('response.statusCode : ' + response.statusCode);
+			
+				var err_res = {};       
+				err_res.responseStatus = {
+					'status': 500,
+					'type': 'Internal Server Error',
+					'err': 'Response: '+ response.statusCode      
+				};  
+					
+				res.status(500);
+				res.send(err_res);	
+			
+			}
+			else if (content_type == 'text/xml;charset=UTF-8')  {			
+			
+				console.error('content_type : ' + content_type);
+			
+				var err_res = {};       
+				err_res.responseStatus = {
+					'status': 500,
+					'type': 'Internal Server Error',
+					'err': 'Content: '+ content_type      
+				};  
+					
+				res.status(500);
+				res.send(err_res);	
+			
+			}
+			else {
+				
+				var content_ext = format;
+				
+				if (format == 'shp') {
+
+					content_ext = 'zip';
+				}							
+				
+				var filename_attach = 'contour-' + idType + '-' + idValue + '.' + content_ext;
+				
+				console.log('content_type ' + content_type);	
+				console.log('content_ext ' + content_ext);
+				console.log('filename_attach ' + filename_attach);
+				
+				res.set({
+					//'Content-Disposition': 'attachment; filename=\''+filename_attach+'\'',
+					'Content-Type': content_type,
+					'Content-Length': body.length
+				});
+		
+				res.send(body);
+			
+			}
+		}		
+	});	
+}
+
+
+/*
+function contour(req, res) {
+	
+	var serviceType = req.params.serviceType;
+	var serviceType = serviceType.toLowerCase();
+	var serviceType_upper = serviceType.toUpperCase();
+	var idType = req.params.idType;
+	var idType = idType.toLowerCase();
+	var idType_upper = idType.toUpperCase();
+	var id_format = req.params.id_format;
+	var id = id_format.split('.')[0];
+	var id_lower = id.toLowerCase();
+	var id_upper = id.toUpperCase();
+	var format = id_format.split('.')[1];
+	var format_lower = format.toLowerCase();
+	var format_upper = format.toUpperCase();
+
+	var outputFormat = 'application/json';
+	if (format_lower == 'json') {
+		outputFormat = 'application/json';
+	}
+	else if (format_lower == 'gml2') {
+		outputFormat = 'GML2';
+	}
+	else if (format_lower == 'gml3') {
+		outputFormat = 'GML3';
+	}
+	else if (format_lower == 'csv') {
+	  outputFormat = 'csv';
+	}
+	else if (format_lower == 'shapefile') {
+	  outputFormat = 'shape-zip';
+	}
+	else if (format_lower == 'kml') {
+	  outputFormat = 'kml';
+	}
+
+	// **********************************************************
+
+
+	var stationClass = 'B'; //default
+	var timePeriod = 'daytime'; //default
+
+	if (serviceType_upper == 'AM') {
+		if (req.params.stationClass) {
+			stationClass = req.params.stationClass;
+		}
+		if (req.params.timePeriod) {
+			timePeriod = req.params.timePeriod + 'time';
+		}
+
+		var stationClass_lower = stationClass.toLowerCase();
+		var stationClass_upper = stationClass.toUpperCase();
+		var timePeriod_lower = timePeriod.toLowerCase();
+		var timePeriod_upper = timePeriod.toUpperCase();
+
+		var contour_level = 0;
+		if (stationClass_upper == "A") {
+			var contour_level = 0.025;
+		}
+		if (stationClass_upper == "B") {
+			var contour_level = 0.5;
+		}
+		if (stationClass_upper == "C") {
+			var contour_level = 0.5;
+		}
+		if (stationClass_upper == "D") {
+			var contour_level = 0.5;
+		}
+
+	}
+
+	var typeName = "contour:" + serviceType + "_contours";
+
+	// **********************************************************
+
+	if (idType == 'applicationid') {
+		var filter = "application_id=" + id_upper;
+	}
+	else if (idType == 'filenumber') {
+		var filter = "filenumber='" + id_upper + "'";
+	}
+	else if (idType == 'callsign') {
+		var filter = "callsign='" + id_upper + "'";
+	}
+	else if (idType == 'antennaid') {
+		var filter = "antid=" + id_upper;
+	}
+	else if (idType == 'facilityid') {
+		var filter = "facility_id=" + id_upper;
+	}
+
+	if (serviceType_upper == 'AM') {
+		filter += "+AND+contour_level=" + contour_level + "+AND+time_period='" + timePeriod_lower + "'";
+	}
+
+
+	var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=" + typeName + "&maxFeatures=1&outputFormat=" + outputFormat + "&cql_filter=" + filter; 
+
+	console.log(url);
+
+		http.get(url, function(res1) {
+			var data = "";
+		   
+			res1.on('data', function (chunk) {
+				data += chunk;
+			});
+			res1.on("end", function() {
+				res.send(data);
+			});
+		}).on("error", function() {
+											
+		//callback(null);
+		});
 
 }
+*/
+	
 // **********************************************************
+/*
 function download(req, res) {
 	
 	var serviceType = req.params.serviceType;
-	var serviceType_lower = serviceType.toLowerCase();
+	var serviceType = serviceType.toLowerCase();
 	var serviceType_upper = serviceType.toUpperCase();
 	var idType = req.params.idType;
-	var idType_lower = idType.toLowerCase();
+	var idType = idType.toLowerCase();
 	var idType_upper = idType.toUpperCase();
 	var id_format = req.params.id_format;
 	var id = id_format.split('.')[0];
@@ -213,33 +444,23 @@ function download(req, res) {
 		if (stationClass_upper == "A") {
 			var contour_level = 0.025;
 		}
-		if (stationClass_upper == "B") {
-			var contour_level = 0.5;
-		}
-		if (stationClass_upper == "C") {
-			var contour_level = 0.5;
-		}
-		if (stationClass_upper == "D") {
-			var contour_level = 0.5;
-		}
-
 	}
 
-	var typeName = "contour:" + serviceType_lower + "_contours";
+	var typeName = "contour:" + serviceType + "_contours";
 
-	if (idType_lower == 'applicationid') {
+	if (idType == 'applicationid') {
 		var filter = "application_id=" + id_upper;
 	}
-	else if (idType_lower == 'filenumber') {
+	else if (idType == 'filenumber') {
 		var filter = "filenumber='" + id_upper + "'";
 	}
-	else if (idType_lower == 'callsign') {
+	else if (idType == 'callsign') {
 		var filter = "callsign='" + id_upper + "'";
 	}
-	else if (idType_lower == 'antennaid') {
+	else if (idType == 'antennaid') {
 		var filter = "antid=" + id_upper;
 	}
-	else if (idType_lower == 'facilityid') {
+	else if (idType == 'facilityid') {
 		var filter = "facility_id=" + id_upper;
 	}
 
@@ -272,7 +493,7 @@ function download(req, res) {
 				var format1 = "gml";
 			}
 			
-			var filename_attach = "contour_" + idType_lower + "-" + id + "." + format1;
+			var filename_attach = "contour_" + idType + "-" + id + "." + format1;
 
 			if (format1 == "zip") {	
 				res.set({
@@ -301,17 +522,18 @@ function download(req, res) {
 
 
 }
+*/
 
 // **********************************************************
 
 function id(req, res) {
 
 	var serviceType = req.params.serviceType;
-	var serviceType_lower = serviceType.toLowerCase();
+	var serviceType = serviceType.toLowerCase();
 	var serviceType_upper = serviceType.toUpperCase();
 	var idType_format = req.params.idType_format;
 	var idType = idType_format.split('.')[0];
-	var idType_lower = idType.toLowerCase();
+	var idType = idType.toLowerCase();
 	var idType_upper = idType.toUpperCase();
 	var format = idType_format.split('.')[1];
 	var format_lower = format.toLowerCase();
@@ -321,19 +543,19 @@ function id(req, res) {
 
 	var contour_level = 0.025;
 
-	if (idType_lower == 'applicationid') {
+	if (idType == 'applicationid') {
 		var propertyName = 'application_id';
 	}
-	else if (idType_lower == 'filenumber') {
+	else if (idType == 'filenumber') {
 		var propertyName = 'filenumber';
 	}
-	else if (idType_lower == 'callsign') {
+	else if (idType == 'callsign') {
 		var propertyName = 'callsign';
 	}
-	else if (idType_lower == 'antennaid') {
+	else if (idType == 'antennaid') {
 		var propertyName = 'antid';
 	}
-	else if (idType_lower == 'facilityid') {
+	else if (idType == 'facilityid') {
 		var propertyName = 'facility_id';
 	}
 
@@ -342,7 +564,7 @@ function id(req, res) {
 		filter = "&cql_filter=contour_level=" + contour_level + "+AND+time_period='daytime'"
 	}
 
-	var typeName = "contour:" + serviceType_lower + "_contours";
+	var typeName = "contour:" + serviceType + "_contours";
 
 
 
@@ -839,8 +1061,9 @@ var url = geo_host + "/" + geo_space + "/ows?service=WFS&version=1.0.0&request=G
 
 // **********************************************************
 
-module.exports.contour = contour;
-module.exports.download = download;
+module.exports.getContour = getContour;
+//module.exports.contour = contour;
+//module.exports.download = download;
 module.exports.id = id;
 module.exports.getTVContourByFilenumber = getTVContourByFilenumber;
 module.exports.getTVContourByApplicationId = getTVContourByApplicationId;
