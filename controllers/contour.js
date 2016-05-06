@@ -40,6 +40,8 @@ function getContour(req, res) {
 		format.toLowerCase();
 	}	
 	
+	if (format == 'xml') { format = 'gml'; }
+	
 	console.log('serviceType ' + serviceType);
 	console.log('idType ' + idType);
 	console.log('idValue ' + idValue);
@@ -187,10 +189,11 @@ function getContour(req, res) {
 			else {
 				
 				var content_ext = format;
+				var content_disp = '';
 				
 				if (format == 'shp') {
-
 					content_ext = 'zip';
+					content_disp = 'attachment';
 				}							
 				
 				var filename_attach = 'contour-' + idType + '-' + idValue + '.' + content_ext;
@@ -200,7 +203,7 @@ function getContour(req, res) {
 				console.log('filename_attach ' + filename_attach);
 				
 				res.set({
-					//'Content-Disposition': 'attachment; filename=\''+filename_attach+'\'',
+					'Content-Disposition': ''+ content_disp +'; filename=\''+filename_attach+'\'',
 					'Content-Type': content_type,
 					'Content-Length': body.length
 				});
