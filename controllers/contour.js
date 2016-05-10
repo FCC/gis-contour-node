@@ -41,6 +41,7 @@ function getContour(req, res) {
 	}	
 	
 	if (format == 'xml') { format = 'gml'; }
+	if (format == 'zip') { format = 'shp'; }
 	
 	console.log('serviceType ' + serviceType);
 	console.log('idType ' + idType);
