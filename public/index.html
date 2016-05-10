@@ -292,6 +292,7 @@
           }
           window.swaggerUi = new SwaggerUi({
             url: url,
+			validatorUrl: null,
             dom_id: container,
             supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
             onComplete: function(swaggerApi, swaggerUi){
@@ -309,7 +310,7 @@
               });
             },
             onFailure: function(data) {
-              log("Unable to Load SwaggerUI");
+              console.log("Unable to Load SwaggerUI");
             },
             docExpansion: "list",
             sorter : "alpha"
@@ -317,9 +318,9 @@
 
           function addApiKeyAuthorization() {
             var key = $('#input_apiKey')[0].value;
-            log("key: " + key);
+            console.log("key: " + key);
             if(key && key.trim() != "") {
-                log("added key " + key);
+                console.log("added key " + key);
                 window.authorizations.add("api_key", new ApiKeyAuthorization("api_key", key, "query"));
             }
           }
@@ -327,13 +328,6 @@
           $('#input_apiKey').change(function() {
             addApiKeyAuthorization();
           });
-
-          // if you have an apiKey you would like to pre-populate on the page for demonstration purposes...
-          /*
-            var apiKey = "myApiKeyXXXX123456789";
-            $('#input_apiKey').val(apiKey);
-            addApiKeyAuthorization();
-          */
 
           window.swaggerUi.load();
         }

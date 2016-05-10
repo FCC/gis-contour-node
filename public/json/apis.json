@@ -1,23 +1,22 @@
 {
     "swagger":"2.0",
     "info": {
-        "version": "0.0.1",
+        "version": "0.9.0",
         "title": "FCC Contour API"
     },
-    "host": "gis-contour-node-dev.us-west-2.elasticbeanstalk.com",
-    "schemes":["http"],
+    "schemes":["http", "https"],
     "basePath": "/",
     "tags":[
         {
             "name": "contour",
-            "description": ""
+            "description": "FCC Contour API"
         }
     ],
     "paths":{
 
 		"/{serviceType}/{idType}/{idValue}.{format}": {
             "get":{
-                "tags": [""],
+                "tags": ["contour"],
                 "summary": "Get Contour by Service Type",
                 "description": "Get contour based on serviceType (AM, FM, TV), idType (callsign, applicationid, fileNumber, antennaid), and idValue. Response returned in GeoJSON, JSONP, Shapefile, KML, GML, CSV.",
                 "parameters": [
