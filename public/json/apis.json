@@ -4,7 +4,6 @@
         "version": "0.9.0",
         "title": "FCC Contour API"
     },
-    "schemes":["http", "https"],
     "basePath": "/",
     "tags":[
         {
