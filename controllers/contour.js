@@ -24,6 +24,10 @@ var request = require('request');
 
 // **********************************************************
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+// **********************************************************
+
 function getContour(req, res) {
 	
 	console.log('\n\n getContour ' );
@@ -126,11 +130,10 @@ function getContour(req, res) {
 	var getUrl = geo_host + '/' + geo_space + '/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=' + typeName + '&maxFeatures=1&outputFormat=' + outputFormat + '&cql_filter=' + filter; 
 
 	console.log('getUrl ' + getUrl);	
-
 	
 	// **********************************************************
 		
-	request({url: getUrl, encoding: null}, function (err, response, body) {
+	request({url: getUrl, encoding: null, rejectUnauthorized: false, strictSSL: false}, function (err, response, body) {
 		
 		if (err) {
 				
