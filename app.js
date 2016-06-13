@@ -1,4 +1,8 @@
+// **********************************************************
 
+'use strict';
+
+// **********************************************************
 // require 
 
 var http = require("http");
@@ -42,7 +46,6 @@ console.log('package_json.description : '+ package_json.description );
 var app = express();
 
 app.use(cors());
-
 
 
 // **********************************************************
@@ -99,84 +102,12 @@ app.param('ext', function(req, res, next, ext) {
 });
 
 
-app.get('/contour/:serviceType/:idType/:id_format/:stationClass/:timePeriod', function(req, res){
-contour.contour(req, res);
+app.get('/:serviceType/:idType/:id.:ext', function(req, res){
+	contour.getContour(req, res);
 });
 
-app.get('/contour/:serviceType/:idType/:id_format', function(req, res){
-contour.contour(req, res);
-});
-
-app.get('/id/:serviceType/:idType_format', function(req, res){
-contour.id(req, res);
-});
-
-app.get('/getTVContourByFilenumber/:filenumber', function(req, res){
-contour.getTVContourByFilenumber(req, res);
-});
-
-app.get('/getFMContourByFilenumber/:filenumber', function(req, res){
-contour.getFMContourByFilenumber(req, res);
-});
-
-app.get('/getAMContourByAntennaId/:antid/:station_class/:time_period', function(req, res){
-contour.getAMContourByAntennaId(req, res);
-});
-
-app.get('/getTVContourByApplicationId/:application_id', function(req, res){
-contour.getTVContourByApplicationId(req, res);
-});
-
-app.get('/getFMContourByApplicationId/:application_id', function(req, res){
-contour.getFMContourByApplicationId(req, res);
-});
-
-app.get('/getTVContourByCallsign/:callsign', function(req, res){
-contour.getTVContourByCallsign(req, res);
-});
-
-app.get('/getFMContourByCallsign/:callsign', function(req, res){
-contour.getFMContourByCallsign(req, res);
-});
-
-app.get('/getFMContourByCallsign/:callsign', function(req, res){
-contour.getFMContourByCallsign(req, res);
-});
-
-app.get('/getAMContourByCallsign/:callsign/:station_class/:time_period', function(req, res){
-contour.getAMContourByCallsign(req, res);
-});
-
-app.get('/getAllTVFileNumber', function(req, res){
-contour.getAllTVFileNumber(req, res);
-});
-
-app.get('/getAllFMFileNumber', function(req, res){
-contour.getAllFMFileNumber(req, res);
-});
-
-app.get('/getAllTVCallsign', function(req, res){
-contour.getAllTVCallsign(req, res);
-});
-
-app.get('/getAllFMCallsign', function(req, res){
-contour.getAllFMCallsign(req, res);
-});
-
-app.get('/getAllTVApplicationId', function(req, res){
-contour.getAllTVApplicationId(req, res);
-});
-
-app.get('/getAllFMApplicationId', function(req, res){
-contour.getAllFMApplicationId(req, res);
-});
-
-app.get('/getAllAMAntennaId', function(req, res){
-contour.getAllAMAntennaId(req, res);
-});
-
-app.get('/getAllAMCallsign', function(req, res){
-contour.getAllAMCallsign(req, res);
+app.get('/:serviceType/:idType/:id', function(req, res){
+	contour.getContour(req, res);
 });
 
 // **********************************************************
@@ -207,9 +138,6 @@ app.use(function(err, req, res, next) {
         'type': 'Internal Server Error',
         'err': err.name +': '+ err.message      
     };  
-    
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     
     res.status(500);
     res.send(err_res);

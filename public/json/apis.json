@@ -1,30 +1,28 @@
 {
     "swagger":"2.0",
     "info": {
-        "version": "0.0.1",
+        "version": "0.9.0",
         "title": "FCC Contour API"
     },
-    "host": "contour-node-dev-1.elasticbeanstalk.com",
-    "schemes":["http"],
     "basePath": "/",
     "tags":[
         {
             "name": "contour",
-            "description": ""
+            "description": "FCC Contour API"
         }
     ],
     "paths":{
 
-		"/contour/{serviceType}/{idType}/{id}.{format}/{stationClass}/{timePeriod}": {
+		"/{serviceType}/{idType}/{idValue}.{format}": {
             "get":{
-                "tags": [""],
+                "tags": ["contour"],
                 "summary": "Get Contour by Service Type",
-                "description": "Get ontour based on serviceType (AM, FM, TV), idType (callsign, applicationId, fileNumber, antennaId). Response returned in GeoJSON or GML.",
+                "description": "Get contour based on serviceType (AM, FM, TV), idType (callsign, applicationid, fileNumber, antennaid), and idValue. Response returned in GeoJSON, JSONP, Shapefile, KML, GML, CSV.",
                 "parameters": [
                     {
 						"name":"serviceType",
 						"in":"path",
-						"description":"serviceType.<br /><br />Valid values: tv, fm, am",
+						"description":"Type of broadcast service. <br /><br />Valid values: tv, fm, am",
 						"required":true,
 						"type":"string",
 						"defaultValue": "tv",
@@ -37,59 +35,63 @@
 					{
 						"name":"idType",
 						"in":"path",
-						"description":"idType.<br /><br />Valid values: callsign, fileNumber (TV and FM only), applicationId (TV and FM only), antennaId (AM only).",
+						"description":"Identification type for service. <br /><br />Valid values: facilityid, callsign, fileNumber (TV and FM only), applicationid (TV and FM only), antennaid (AM only)",
 						"required":true,
 						"type":"string",
-						"defaultValue": "callsign",
+						"defaultValue": "facilityid",
 						"enum": [
+							"facilityid",
 							"callsign",
-							"fileNumber",
-							"applicationId",
-							"antennaId",
-							"facilityId"
+							"filenumber",
+							"applicationid",
+							"antennaid"
 						]
 					},
 					{
-						"name":"id",
+						"name":"idValue",
 						"in":"path",
-						"description":"id, <br /><br />. Values of callsign, filenumber, applicationId, or antennaId.",
+						"description":"Name or ID of service. <br /><br />Values of facilityid, callsign, filenumber, applicationid, or antennaid. <br /><br />Examples: 1051 (facilityid); WJLA-TV (callsign)",
 						"required":true,
 						"type":"string",
-						"defaultValue": "W04AE"
+						"defaultValue": ""
 					},
 					{
 						"name":"format",
 						"in":"path",
-						"description":"Format for the returned results.<br /><br />Valid values: json, jsonp, xml",
+						"description":"Format for the returned results.<br /><br />Valid values: json, jsonp, shp, kml, gml, csv. Shapefiles (.shp) download as zip archive (.zip). <br /><br />Defaults to json.",
 						"required":false,
 						"type":"string",
 						"defaultValue": "json",
 						"enum": [
 							"json",
-							"gml"
+							"jsonp",
+							"shp",
+							"kml",
+							"gml",
+							"csv"
 						]
 					},
 					{
 						"name":"stationClass",
 						"in":"query",
-						"description":"class of the station (can be A, B, C, or D). <br /><br />AM only.",
+						"description":"Class of the station. <br /><br />Values can be: a, b, c, or d. <br /><br />AM only - value will be ignored for TV and FM",
 						"required":false,
 						"type":"string",
-						"defaultValue": "B",
+						"defaultValue": "",
 						"enum": [
-							"A",
-							"B",
-							"C",
-							"D"
+							"a",
+							"b",
+							"c",
+							"d"
 						]
 					},
 					{
 						"name":"timePeriod",
 						"in":"query",
-						"description":"timePeriod. <br /><br />AM only. (Values can be day for now)",
+						"description":"Time of day. <br /><br />Values can be: day or night. [Values can be only day for now]. <br /><br />AM only - value will be ignored for TV and FM",
 						"required":false,
 						"type":"string",
-						"defaultValue": "day",
+						"defaultValue": "",
 						"enum": [
 							"day"
 						]
@@ -98,75 +100,17 @@
                 "responses": {
                     "200": {
                         "description": "OK"
-
                     }
                 },
                 "produces": [
-                    "application/json"
+                    "application/json",
+					"text/javascript",
+					"application/zip",					
+					"application/vnd.google-earth.kml+xml",
+					"text/xml",
+					"text/csv"				
                 ]
             }            
-        },
-		
-		"/id/{serviceType}/{idType}.{format}": {
-            "get":{
-                "tags": [""],
-                "summary": "Get all IDs for a service.",
-                "description": "Get all IDs based on service type (e.g., get all call signs for TV).  Return all IDs in an array. Limited to 100 items for demo purpose.",
-                "parameters": [
-                    {
-						"name":"serviceType",
-						"in":"path",
-						"description":"serviceType.<br /><br />Valid values: TV, FM, AM",
-						"required":true,
-						"type":"string",
-						"defaultValue": "TV",
-						"enum": [
-							"TV",
-							"FM",
-							"AM"
-						]
-					},
-					{
-						"name":"idType",
-						"in":"path",
-						"description":"idType.<br /><br />Valid values: callsign, fileNumber (TV and FM only), applicationId (TV and FM only), antenna ID (AM only)",
-						"required":true,
-						"type":"string",
-						"defaultValue": "fileNumber",
-						"enum": [
-							"callsign",
-							"applicationId",
-							"filenumber",
-							"antennaId"
-						]
-					},
-					{
-						"name":"format",
-						"in":"path",
-						"description":"Format for the returned results.<br /><br />Valid values: json",
-						"required":false,
-						"type":"string",
-						"defaultValue": "json",
-						"enum": [
-							"json"
-						]
-					}				
-				],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-
-                    }
-                },
-                "produces": [
-                    "application/json"
-                ]
-            }            
-        }
-		
-		
-		
-		
-        
+        }	        
     }
 }
