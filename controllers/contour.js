@@ -127,7 +127,7 @@ function getContour(req, res) {
 	
 	console.log('filter ' + filter);
 
-	var getUrl = geo_host + '/' + geo_space + '/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=' + typeName + '&maxFeatures=1&outputFormat=' + outputFormat + '&cql_filter=' + filter; 
+	var getUrl = geo_host + '/' + geo_space + '/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=' + typeName + '&maxFeatures=1&sortBy=filenumber+D&outputFormat=' + outputFormat + '&cql_filter=' + filter; 
 
 	console.log('getUrl ' + getUrl);	
 	
