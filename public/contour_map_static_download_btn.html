@@ -93,7 +93,7 @@
 	 console.log(url);
 	 
                $.ajax({
-                    url: "http://gis-contour-node-dev.us-west-2.elasticbeanstalk.com/fm/facilityid/20638.json",
+                    url: "http://gis-contour-node-dev.us-west-2.elasticbeanstalk.com/tv/facilityid/53930.json",
                     async: true,
                     type: "GET",
                     dataType: "json",
@@ -154,7 +154,7 @@
 							}).addTo(map).bringToBack();
 							
 							var station_info = "Call Sign: " + callsign + "<br>Service: " + service + "<br>Application ID: " + application_id + "<br>File Number: " + filenumber + "<br>Coverage Area: " + area + " mi<sup>2</sup>";
-							var popup = L.popup({closeButton: true})
+							var popup = L.popup({closeButton: true, offset: [0, -15]})
 								.setLatLng([station_lat, station_lon])
 								.setContent(station_info)
 								.openOn(map);
