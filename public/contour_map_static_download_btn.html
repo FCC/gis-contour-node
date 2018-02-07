@@ -27,7 +27,7 @@
 	var map;
 	var contour_json;
 	var station_marker;
-	var host = 'http://contour-node-dev-1.elasticbeanstalk.com';
+	var host = 'http://gis-contour-node-dev.us-west-2.elasticbeanstalk.com';
 	var geo_host = "http://contour-geoserver.elasticbeanstalk.com";
 	var geo_space = "contour";
 	
@@ -44,16 +44,16 @@
 	var facility_id = 5343;
 	
 	//AM example
-	var serviceType = "AM";
-	var callsign = "DWEDC";
-	var facility_id = 22044;
+	var serviceType = "TV";
+	var callsign = "xxxxx";
+	var facility_id = 47906;
 	
 	
-	contour_style = {color: "#000", opacity: 1.0,  fillOpacity: 0.0, weight: 4};
+	contour_style = {color: "#13428B", fillColor: "#13428B", opacity: 1.0,  fillOpacity: 0.3, weight: 4};
 	
 	function createMap() {
  
-     L.mapbox.accessToken = 'pk.eyJ1IjoiY29tcHV0ZWNoIiwiYSI6InMyblMya3cifQ.P8yppesHki5qMyxTc2CNLg';
+     L.mapbox.accessToken = 'pk.eyJ1IjoiZmNjIiwiYSI6InBiaGMyLU0ifQ.LOmVYpUCFv2yWpbvxDdQNg';
      map = L.mapbox.map('map', 'fcc.k74ed5ge', {
              attributionControl: true,
              maxZoom: 19
@@ -81,55 +81,96 @@
 	 ).addTo(map);
 
 	if (serviceType == "AM") { 
-		var url = host + "/contour/am/facilityid/" + facility_id + ".json/B/day";
+		var url = host + "/am/facilityid/" + facility_id + ".json/B/day";
 	}
 	if (serviceType == "TV") { 
-		var url = host + "/contour/tv/facilityid/" + facility_id + ".json";
+		var url = host + "/tv/facilityid/" + facility_id + ".json";
 	}
 	if (serviceType == "FM") { 
-		var url = host + "/contour/fm/facilityid/" + facility_id + ".json";
+		var url = host + "/fm/facilityid/" + facility_id + ".json";
 	}
 
+	 console.log(url);
 	 
-	$.ajax(url, {
-        type: "GET",
-        url: url,
-        dataType: "json",
-        success: function(data){
-		
-		if (data.features.length == 0) {
-			$('#contour_msg').css({"visibility": "visible"});
-			return;
-		}
-		
-		var p = data.features[0].properties;
-		var application_id = p.application_id;
-		var service = p.service;
-		var callsign = p.callsign;
-		var filenumber = p.filenumber;
-		var station_lat = p.station_lat;
-		var station_lon = p.station_lon;
-		
+               $.ajax({
+                    url: "http://gis-contour-node-dev.us-west-2.elasticbeanstalk.com/tv/facilityid/53930.json",
+                    async: true,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data){
+					
+						var station_markers = [];
+						var highlight_contour;
+						var contour_highlight_style = {color: "#ffff00", fillColor: "#ffffff", opacity: 1.0,  fillOpacity: 0, weight: 10};
 
-		
-		if (map.hasLayer(contour_json)) {
-		map.removeLayer(contour_json);
-		}
-		
-		contour_json = L.geoJson(data, {
-			style: contour_style
-		}).addTo(map);
+                        if (data.features.length == 0) {
+                            $('#contour_msg').css({"visibility": "visible"});
+                            return;
+                        }
 
-		if (map.hasLayer(station_marker)) {
-			map.removeLayer(station_marker);
-		}
-		station_marker = L.marker([station_lat, station_lon]).addTo(map);
-		map.fitBounds(contour_json.getBounds());
-		  
-        }
+                        if (map.hasLayer(contour_json)) {
+                            map.removeLayer(contour_json);
+                        }
+
+                        contour_json = L.geoJson(data, {
+                            style: contour_style,
+							onEachFeature: onEachFeature
+                        }).addTo(map);
+						map.fitBounds(contour_json.getBounds());
+
+						
+						//add station marker
+						for (var i = 0; i < data.features.length; i++) {
+							p = data.features[i].properties;
+							var station_lat = p.station_lat;
+							var station_lon = p.station_lon;
+							if (station_markers.length > i && map.hasLayer(station_markers[i])) {
+								map.removeLayer(station_marker);
+							}
+							station_markers[i] = L.marker([station_lat, station_lon]).addTo(map);
+						}
+						
+						function onEachFeature(feature, layer) {
+							layer.on({
+								mouseover: mouseover
+							});
+						}
+				
+						function mouseover(e) {
+							var layer = e.target
+							var p = layer.feature.properties;
+							var application_id = p.application_id;
+							var service = p.service;
+							var callsign = p.callsign;
+							var filenumber = p.filenumber;
+							var station_lat = p.station_lat;
+							var station_lon = p.station_lon;
+							var area = Math.round(p.area/1000000/0.386102);
+							if (map.hasLayer(highlight_contour)) {
+								map.removeLayer(highlight_contour);
+							}
+							highlight_contour = L.geoJson({'type': 'FeatureCollection', 'features': [layer.feature]}, {
+								style: contour_highlight_style
+							}).addTo(map).bringToBack();
+							
+							var station_info = "Call Sign: " + callsign + "<br>Service: " + service + "<br>Application ID: " + application_id + "<br>File Number: " + filenumber + "<br>Coverage Area: " + area + " mi<sup>2</sup>";
+							var popup = L.popup({closeButton: true, offset: [0, -15]})
+								.setLatLng([station_lat, station_lon])
+								.setContent(station_info)
+								.openOn(map);
+						}
+
+						map.on('click', function(e) {
+							if (map.hasLayer(highlight_contour)) {
+								map.removeLayer(highlight_contour);
+							}
+						});
+						
+
+                    }
 
 
-});
+                });
 	 
 	  
 	}
@@ -191,7 +232,7 @@ $(document).ready(function() {
 
 <body>
 <div>
-<div id="map" style="width: 700px; height: 700px; vertical-align: top">
+<div id="map" style="width: 1200px; height: 800px; vertical-align: top">
 </div>
 <div id="contour_msg" style="position: absolute; top: 10px; left:100px; font-size: 20px; z-index: 999; visibility: hidden">Currently no contours are available for this facility.</div>
 </div>
